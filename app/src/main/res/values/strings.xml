@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">MyBike</string>
+    <string name="bikes_screen">Bikes</string>
+    <string name="rides_screen">Rides</string>
+    <string name="settings_screen">Settings</string>
+    <string name="no_bikes_added">You don\'t have any bike added yet. \n Add your first bike and start register \n your rides in order to keep your bike \n service cycles up to date.</string>
+    <string name="add_bike">Add Bike</string>
+    <string name="add_ride">Add Ride</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="more">More</string>
+    <string name="distance_units">Distance Units</string>
+    <string name="service_reminder">Service Reminder</string>
+    <string name="default_bike">Default Bike</string>
 </resources>
