@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.window.SplashScreen
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -17,10 +18,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mybike.bikes.AddBikeScreen
+import com.example.mybike.bikes.BikesViewModel
+import com.example.mybike.settings.SettingsViewModel
 import com.example.mybike.ui.theme.MyBikeTheme
 import com.example.mybike.vo.Screens
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val settingsViewModel by viewModels<SettingsViewModel>()
+    private val bikesViewModel by viewModels<BikesViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -48,7 +57,10 @@ class MainActivity : ComponentActivity() {
                 SplashScreen { navController.navigate(Screens.MAIN_SCREEN.name) }
             }
             composable(Screens.MAIN_SCREEN.name) {
-                MainScreen({ TODO("") }, { TODO("") })
+                MainScreen({ navController.navigate(Screens.ADD_BIKE.name) }, { TODO("") }, settingsViewModel, bikesViewModel)
+            }
+            composable(Screens.ADD_BIKE.name) {
+                AddBikeScreen(bikesViewModel = bikesViewModel) { navController.popBackStack() }
             }
         }
     }

@@ -87,8 +87,8 @@ class MyBikeSharedPreferences @Inject constructor(@ApplicationContext private va
         saveValue(SHOW_SERVICE_REMINDER_KEY, showServiceReminder)
     }
 
-    fun saveDefaultBike(defaultBikeName: String) {
-        saveValue(DEFAULT_BIKE_NAME_KEY, defaultBikeName)
+    fun saveDefaultBike(defaultBikeId: Long) {
+        saveValue(DEFAULT_BIKE_NAME_KEY, defaultBikeId)
     }
 
     fun getDistanceUnits(): DistanceUnit {
@@ -116,8 +116,8 @@ class MyBikeSharedPreferences @Inject constructor(@ApplicationContext private va
         return getBoolean(SHOW_SERVICE_REMINDER_KEY, false)
     }
 
-    fun getDefaultBike(): String {
-        return getString(DEFAULT_BIKE_NAME_KEY)
+    fun getDefaultBike(): Long {
+        return getLong(DEFAULT_BIKE_NAME_KEY)
     }
 
 }

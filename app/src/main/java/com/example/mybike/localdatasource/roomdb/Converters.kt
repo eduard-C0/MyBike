@@ -6,12 +6,12 @@ import com.example.mybike.vo.BikeType
 class Converters {
 
     @TypeConverter
-    fun fromDistanceUnit(bikeType: BikeType): String {
+    fun fromBikeType(bikeType: BikeType): String {
         return bikeType.name
     }
 
     @TypeConverter
-    fun toDistanceUnit(bikeType: String): BikeType {
+    fun toBikeType(bikeType: String): BikeType {
         return BikeType.valueOf(bikeType)
     }
 }

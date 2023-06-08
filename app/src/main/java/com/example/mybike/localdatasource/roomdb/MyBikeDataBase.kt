@@ -6,8 +6,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.mybike.localdatasource.roomdb.settings.BikeDao
-import com.example.mybike.localdatasource.roomdb.settings.BikeEntity
+import com.example.mybike.localdatasource.roomdb.bike.BikeDao
+import com.example.mybike.localdatasource.roomdb.bike.BikeEntity
 
 @Database(version = 1, exportSchema = false, entities = [BikeEntity::class])
 @TypeConverters(Converters::class)

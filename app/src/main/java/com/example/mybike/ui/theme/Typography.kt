@@ -19,5 +19,6 @@ val Typography = Typography(
     titleSmall = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.W500, fontSize = 13.sp),
     displayMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.W300, fontSize = 15.sp),
     displayLarge = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.W300, fontSize = 17.sp),
-    displaySmall = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.W300, fontSize = 12.sp)
+    displaySmall = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.W300, fontSize = 12.sp),
+    headlineMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.W300, fontSize = 20.sp)
 )

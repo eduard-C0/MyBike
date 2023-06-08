@@ -43,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.End
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -97,14 +99,13 @@ fun CustomTopBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit = {}, modifier: Modifier = Modifier) {
+fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit = {}, modifier: Modifier = Modifier, selectedItem: String = NONE, onSelectedItem: (value: String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(if (elements.isEmpty()) NONE else elements[0]) }
+    var selectedText by remember(selectedItem) { mutableStateOf(selectedItem.ifBlank { NONE }) }
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(dimensionResource(id = R.dimen.d12)),
+        modifier = modifier
+            .fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
     ) {
         ExposedDropdownMenuBox(
@@ -122,7 +123,7 @@ fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit =
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { CustomTrailingIcon(expanded = expanded, color = White) },
-                        modifier = modifier
+                        modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White, containerColor = DarkBlue, focusedBorderColor = Gray),
@@ -141,6 +142,7 @@ fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit =
                                 text = { Text(text = item) },
                                 onClick = {
                                     selectedText = item
+                                    onSelectedItem(item)
                                     expanded = false
                                 },
                                 colors = MenuDefaults.itemColors(textColor = White),
@@ -176,12 +178,11 @@ fun CustomTrailingIcon(expanded: Boolean, color: Color) {
 }
 
 @Composable
-fun CustomThreeDotsDropdown(modifier: Modifier = Modifier.fillMaxWidth(), elements: List<ThreeDotsDropdownItem>) {
+fun CustomThreeDotsDropdown(modifier: Modifier = Modifier, elements: List<ThreeDotsDropdownItem>) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
     ) {
         IconButton(onClick = { expanded = !expanded }) {
             Icon(
@@ -242,7 +243,7 @@ fun PreviewCustomTopBar() {
 @Composable
 fun PreviewCustomDropdown() {
     Column(modifier = Modifier.fillMaxHeight()) {
-        CustomDropDown(elements = listOf("Road Bike", "MTB", "Electric", "Hybrid"), modifier = Modifier.height(dimensionResource(id = R.dimen.d60)))
+        CustomDropDown(elements = listOf("Road Bike", "MTB", "Electric", "Hybrid"), modifier = Modifier.height(dimensionResource(id = R.dimen.d60)), onSelectedItem = {})
     }
 }
 

@@ -1,5 +1,5 @@
 package com.example.mybike.vo
 
 enum class Screens {
-    BIKES, RIDES, SETTINGS, SPLASH_SCREEN, MAIN_SCREEN
+    BIKES, RIDES, SETTINGS, SPLASH_SCREEN, MAIN_SCREEN, ADD_BIKE
 }

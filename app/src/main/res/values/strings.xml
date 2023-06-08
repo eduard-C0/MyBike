@@ -11,5 +11,11 @@
     <string name="more">More</string>
     <string name="distance_units">Distance Units</string>
     <string name="service_reminder">Service Reminder</string>
+    <string name="bike_name">Bike Name</string>
+    <string name="service_in">Service In</string>
+    <string name="service_in_characteristic">Service in</string>
+    <string name="wheel_size">Wheel Size</string>
     <string name="default_bike">Default Bike</string>
+    <string name="required_field">Required field</string>
+    <string name="wheels">Wheels: </string>
 </resources>

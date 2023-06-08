@@ -1,10 +1,12 @@
-package com.example.mybike.localdatasource.roomdb.settings
+package com.example.mybike.localdatasource.roomdb.bike
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BikeDao {
@@ -17,4 +19,10 @@ interface BikeDao {
 
     @Delete
     fun deleteBike(bikeType: BikeEntity): Int
+
+    @Query("SELECT * FROM bikes")
+    fun getAllBikes(): Flow<List<BikeEntity>>
+
+    @Query("SELECT * FROM bikes WHERE bikeId= :bikeId")
+    fun getBike(bikeId: Long): BikeEntity
 }

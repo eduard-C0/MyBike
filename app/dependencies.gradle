@@ -18,10 +18,16 @@ dependencies {
 
     //RoomDb
     implementation "androidx.room:room-runtime:2.5.1"
+    implementation 'androidx.room:room-ktx:2.5.1'
     kapt "androidx.room:room-compiler:2.5.1"
 
     //Security
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
+
+    //Pager
+    implementation 'androidx.compose.foundation:foundation:1.4.3'
+    implementation "androidx.compose.ui:ui-util:1.4.3"
+
 
 
 }
