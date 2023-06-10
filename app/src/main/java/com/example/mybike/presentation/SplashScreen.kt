@@ -1,4 +1,4 @@
-package com.example.mybike
+package com.example.mybike.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.mybike.R
 import com.example.mybike.ui.theme.MyBikeTheme
 import kotlinx.coroutines.delay
 

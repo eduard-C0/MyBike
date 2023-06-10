@@ -1,4 +1,4 @@
-package com.example.mybike
+package com.example.mybike.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
@@ -26,11 +26,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.mybike.bikes.BikesScreen
-import com.example.mybike.bikes.BikesViewModel
-import com.example.mybike.rides.RidesScreen
-import com.example.mybike.settings.SettingsScreen
-import com.example.mybike.settings.SettingsViewModel
+import com.example.mybike.R
+import com.example.mybike.presentation.bikes.BikesScreen
+import com.example.mybike.presentation.bikes.BikesViewModel
+import com.example.mybike.presentation.rides.RidesScreen
+import com.example.mybike.presentation.rides.RidesViewModel
+import com.example.mybike.presentation.settings.SettingsScreen
+import com.example.mybike.presentation.settings.SettingsViewModel
 import com.example.mybike.ui.theme.DarkBlue
 import com.example.mybike.ui.theme.DefaultItem
 import com.example.mybike.ui.theme.MyBikeTheme
@@ -41,9 +43,8 @@ import com.example.mybike.vo.BottomNavItem.*
 import com.example.mybike.vo.Screens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(onAddBikeClicked: () -> Unit, onAddRideClicked: () -> Unit, settingsViewModel: SettingsViewModel, bikesViewModel: BikesViewModel) {
+fun MainScreen(onAddBikeClicked: () -> Unit, onAddRideClicked: () -> Unit, settingsViewModel: SettingsViewModel, bikesViewModel: BikesViewModel, ridesViewModel: RidesViewModel) {
     val bottomNavItems = listOf(
         Bikes,
         Rides,
@@ -52,15 +53,17 @@ fun MainScreen(onAddBikeClicked: () -> Unit, onAddRideClicked: () -> Unit, setti
     val navController = rememberNavController()
 
     Scaffold(bottomBar = { BottomNavigation(bottomNavItems, navController) }) { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = paddingValues.calculateBottomPadding())) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+        ) {
             NavHost(navController = navController, startDestination = Screens.BIKES.name) {
                 composable(Screens.BIKES.name) {
                     BikesScreen(onAddBikeClicked, bikesViewModel)
                 }
                 composable(Screens.RIDES.name) {
-                    RidesScreen(onAddRideClicked)
+                    RidesScreen(ridesViewModel, onAddRideClicked)
                 }
                 composable(Screens.SETTINGS.name) {
                     SettingsScreen(settingsViewModel)
@@ -96,6 +99,6 @@ fun BottomNavigation(items: List<BottomNavItem>, navController: NavController) {
 @Composable
 fun PreviewMainScreen() {
     MyBikeTheme {
-        MainScreen({}, {}, hiltViewModel(), hiltViewModel())
+        MainScreen({}, {}, hiltViewModel(), hiltViewModel(), hiltViewModel())
     }
 }

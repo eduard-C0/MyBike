@@ -4,11 +4,11 @@ enum class BikeType(val textToShow: String) {
     MTB("MTB"), ROADBIKE("Road Bike"), ELECTRIC("Electric"), HYBRID("Hybrid")
 }
 
-fun BikeType.toBike(): Bike {
+fun BikeType.toBike(): BikeToShow {
     return when (this) {
-        BikeType.MTB -> Bike.MtbBike
-        BikeType.HYBRID -> Bike.HybridBike
-        BikeType.ELECTRIC -> Bike.ElectricBike
-        BikeType.ROADBIKE -> Bike.RoadBike
+        BikeType.MTB -> BikeToShow.MtbBike
+        BikeType.HYBRID -> BikeToShow.HybridBike
+        BikeType.ELECTRIC -> BikeToShow.ElectricBike
+        BikeType.ROADBIKE -> BikeToShow.RoadBike
     }
 }

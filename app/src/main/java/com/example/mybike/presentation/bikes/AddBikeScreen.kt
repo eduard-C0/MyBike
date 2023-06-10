@@ -1,9 +1,10 @@
-package com.example.mybike.bikes
+package com.example.mybike.presentation.bikes
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,38 +14,31 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
@@ -52,7 +46,6 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,13 +53,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.example.mybike.CustomButton
-import com.example.mybike.CustomDropDown
-import com.example.mybike.CustomLabel
-import com.example.mybike.CustomTopBar
+import com.example.mybike.presentation.CustomButton
+import com.example.mybike.presentation.CustomDropDown
+import com.example.mybike.presentation.CustomLabel
+import com.example.mybike.presentation.CustomTopBar
 import com.example.mybike.R
 import com.example.mybike.ui.theme.BikeAqua
 import com.example.mybike.ui.theme.BikeBlue
@@ -85,15 +77,13 @@ import com.example.mybike.ui.theme.DarkBlue
 import com.example.mybike.ui.theme.Gray
 import com.example.mybike.ui.theme.Typography
 import com.example.mybike.ui.theme.White
-import com.example.mybike.utils.SuffixTransformer
-import com.example.mybike.vo.Bike
+import com.example.mybike.vo.BikeToShow
 import com.example.mybike.vo.WheelSize
-import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit) {
+fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit, onExitButtonClicked: () -> Unit) {
     var bikeNameInputText by remember { mutableStateOf(TextFieldValue("")) }
     var serviceInInputText by remember { mutableStateOf(TextFieldValue("")) }
     var defaultBikeSwitch by remember { mutableStateOf(false) }
@@ -101,7 +91,19 @@ fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit) 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.align(Alignment.TopCenter)) {
 
-            CustomTopBar(title = stringResource(id = R.string.add_bike))
+            CustomTopBar(
+                title = stringResource(id = R.string.add_bike),
+                actions = {
+                    Icon(painter = painterResource(id = R.drawable.icon_x), contentDescription = null, tint = White, modifier = Modifier
+                        .clickable { onExitButtonClicked() }
+                        .padding(
+                            end = dimensionResource(
+                                id = R.dimen.d12
+                            )
+                        ))
+                }
+            )
+
             CircularList(modifier = Modifier
                 .background(Black)
                 .padding(top = dimensionResource(id = R.dimen.d8), bottom = dimensionResource(id = R.dimen.d12)),
@@ -117,8 +119,16 @@ fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit) 
                         bikeNameInputText = it
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White, containerColor = DarkBlue, focusedBorderColor = Gray),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = White,
+                        unfocusedTextColor = White,
+                        focusedContainerColor = DarkBlue,
+                        unfocusedContainerColor = DarkBlue,
+                        disabledContainerColor = DarkBlue,
+                        focusedBorderColor = Gray,
+                    ),
                     textStyle = Typography.displayMedium,
+                    maxLines= 1,
                     isError = bikeNameInputText.text.isBlank(),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -142,7 +152,15 @@ fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit) 
                         serviceInInputText = it
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White, containerColor = DarkBlue, focusedBorderColor = Gray),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = White,
+                        unfocusedTextColor = White,
+                        focusedContainerColor = DarkBlue,
+                        unfocusedContainerColor = DarkBlue,
+                        disabledContainerColor = DarkBlue,
+                        focusedBorderColor = Gray,
+                    ),
+                    maxLines= 1,
                     textStyle = Typography.displayMedium,
                     isError = serviceInInputText.text.isBlank(),
                     modifier = Modifier.fillMaxWidth(),
@@ -194,14 +212,14 @@ fun RequiredText() {
 
 
 @Composable
-fun CustomBike(bike: Bike, color: Color?, withSmallWheel: Boolean, modifier: Modifier = Modifier) {
+fun CustomBike(bikeToShow: BikeToShow, color: Color?, withSmallWheel: Boolean, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.TopCenter
     ) {
-        Image(painter = painterResource(id = if (withSmallWheel) bike.smallWheel else bike.bigWheel), contentDescription = null)
-        color?.let { Icon(painter = painterResource(id = bike.middle), contentDescription = null, tint = it) } ?: Icon(painter = painterResource(id = bike.middle), contentDescription = null)
-        Image(painter = painterResource(id = bike.over), contentDescription = null)
+        Image(painter = painterResource(id = if (withSmallWheel) bikeToShow.smallWheel else bikeToShow.bigWheel), contentDescription = null)
+        color?.let { Icon(painter = painterResource(id = bikeToShow.middle), contentDescription = null, tint = it) } ?: Icon(painter = painterResource(id = bikeToShow.middle), contentDescription = null)
+        Image(painter = painterResource(id = bikeToShow.over), contentDescription = null)
     }
 }
 
@@ -251,12 +269,12 @@ fun HorizontalPagerWithDots(
     bikesViewModel: BikesViewModel
 ) {
     val currentColor = bikesViewModel.currentColor.collectAsState()
-    val currentBike = bikesViewModel.currentSelectedBike.collectAsState()
+    val currentBike = bikesViewModel.currentSelectedBikeToShow.collectAsState()
     val currentWheelSize = bikesViewModel.currentWheelSize.collectAsState()
 
-    val listOfBikes = listOf(Bike.RoadBike, Bike.MtbBike, Bike.ElectricBike, Bike.HybridBike)
+    val listOfBikeToShows = listOf(BikeToShow.RoadBike, BikeToShow.MtbBike, BikeToShow.ElectricBike, BikeToShow.HybridBike)
 
-    val pageCount = listOfBikes.size
+    val pageCount = listOfBikeToShows.size
     val pagerState = rememberPagerState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -286,14 +304,14 @@ fun HorizontalPagerWithDots(
                 contentAlignment = Alignment.Center
             ) {
                 CustomBike(
-                    bike = listOfBikes[page],
+                    bikeToShow = listOfBikeToShows[page],
                     color = currentColor.value,
                     withSmallWheel = currentWheelSize.value != WheelSize.BIG
                 )
             }
         }
 
-        bikesViewModel.saveCurrentBike(listOfBikes[pagerState.currentPage])
+        bikesViewModel.saveCurrentBike(listOfBikeToShows[pagerState.currentPage])
 
         Text(text = currentBike.value.bikeType.textToShow, color = White)
 
@@ -323,7 +341,7 @@ fun HorizontalPagerWithDots(
 @Preview
 @Composable
 fun PreviewCustomBike() {
-    CustomBike(Bike.ElectricBike, BikeRed, false)
+    CustomBike(BikeToShow.ElectricBike, BikeRed, false)
 }
 
 @Preview()

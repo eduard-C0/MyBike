@@ -1,6 +1,5 @@
-package com.example.mybike.settings
+package com.example.mybike.presentation.settings
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,10 +26,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.toLowerCase
-import com.example.mybike.CustomDropDown
-import com.example.mybike.CustomLabel
-import com.example.mybike.CustomTopBar
+import com.example.mybike.presentation.CustomDropDown
+import com.example.mybike.presentation.CustomLabel
+import com.example.mybike.presentation.CustomTopBar
 import com.example.mybike.R
 import com.example.mybike.ui.theme.BackgroundColor
 import com.example.mybike.ui.theme.Blue
@@ -47,6 +47,7 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
         settingsViewModel.getServiceReminderDistance()
         settingsViewModel.getDefaultBike()
         settingsViewModel.getServiceReminderNotificationStatus()
+        settingsViewModel.getBikes()
     }
 
     //TODO: Get the value from the view model, If empty 100KM default
@@ -90,9 +91,15 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
                         settingsViewModel.saveServiceReminderDistance(it.text)
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White, containerColor = DarkBlue, focusedBorderColor = Gray),
-                    textStyle = Typography.displayMedium,
-                    visualTransformation = SuffixTransformer(distanceUnit.value.name.lowercase())
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = White,
+                        unfocusedTextColor = White,
+                        focusedContainerColor = DarkBlue,
+                        unfocusedContainerColor = DarkBlue,
+                        disabledContainerColor = DarkBlue,
+                        focusedBorderColor = Gray,
+                    ), textStyle = Typography.displayMedium,
+                    trailingIcon = { Text(text = distanceUnit.value.name, color = Gray) }
                 )
             }
 

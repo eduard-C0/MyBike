@@ -3,7 +3,9 @@ package com.example.mybike.localdatasource.roomdb.bike
 import com.example.mybike.localdatasource.roomdb.MyBikeDataBase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class BikeRepository @Inject constructor(private val myBikeDataBase: MyBikeDataBase) : IBikeRepository {
     override suspend fun addBike(bikeEntity: BikeEntity): Long {
         return myBikeDataBase.bikeDao().addBike(bikeEntity)
@@ -17,7 +19,7 @@ class BikeRepository @Inject constructor(private val myBikeDataBase: MyBikeDataB
         return myBikeDataBase.bikeDao().deleteBike(bikeEntity)
     }
 
-    override suspend fun getAllBikes(): Flow<List<BikeEntity>> {
+    override fun getAllBikes(): Flow<List<BikeEntity>> {
         return myBikeDataBase.bikeDao().getAllBikes()
     }
 

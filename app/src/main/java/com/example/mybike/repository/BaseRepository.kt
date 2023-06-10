@@ -1,15 +1,16 @@
 package com.example.mybike.repository
 
-import com.example.mybike.localdatasource.roomdb.MyBikeDataBase
 import com.example.mybike.localdatasource.roomdb.bike.BikeEntity
 import com.example.mybike.localdatasource.roomdb.bike.BikeRepository
+import com.example.mybike.localdatasource.roomdb.ride.RideEntity
+import com.example.mybike.localdatasource.roomdb.ride.RideRepository
 import com.example.mybike.localdatasource.sharedpreferences.MyBikeSharedPreferences
-import com.example.mybike.vo.Bike
+import com.example.mybike.vo.BikeToShow
 import com.example.mybike.vo.DistanceUnit
 import com.example.mybike.vo.WheelSize
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class BaseRepository @Inject constructor(
     private val myBikeSharedPreferences: MyBikeSharedPreferences,
-    private val myBikeRepository: BikeRepository,
+    private val bikeRepository: BikeRepository,
+    private val rideRepository: RideRepository,
     private val defaultCoroutine: CoroutineScope
 ) {
 
@@ -55,24 +57,28 @@ class BaseRepository @Inject constructor(
         myBikeSharedPreferences.saveDefaultBike(defaultBikeId)
     }
 
-    suspend fun getDefaultBike(): String {
+    fun getDefaultBike(): String {
         defaultCoroutine.launch {
-            defaultBike = myBikeRepository.getBike(myBikeSharedPreferences.getDefaultBike()).bikeName
+            defaultBike = bikeRepository.getBike(myBikeSharedPreferences.getDefaultBike()).bikeName
         }
         return defaultBike
     }
 
-    suspend fun getAllBikes(): Flow<List<BikeEntity>> {
-        return myBikeRepository.getAllBikes()
+    fun getAllBikes(): Flow<List<BikeEntity>> {
+        return bikeRepository.getAllBikes()
     }
 
-    fun addBike(bike: Bike, bikeName: String, wheelSize: WheelSize, color: Int, serviceDue: Int, isDefaultBike: Boolean) {
+    fun getAllRides(): Flow<List<RideEntity>> {
+        return rideRepository.getAllRides()
+    }
+
+    fun addBike(bikeToShow: BikeToShow, bikeName: String, wheelSize: WheelSize, color: Int, serviceDue: Int, isDefaultBike: Boolean) {
         defaultCoroutine.launch {
-            val bikeId = myBikeRepository.addBike(
+            val bikeId = bikeRepository.addBike(
                 BikeEntity(
                     bikeName = bikeName,
                     bikeColor = color,
-                    bikeType = bike.bikeType,
+                    bikeType = bikeToShow.bikeType,
                     inchWheelSize = wheelSize.value,
                     distanceServiceDueInKm = serviceDue
                 )
@@ -82,5 +88,23 @@ class BaseRepository @Inject constructor(
                 saveDefaultBike(bikeId)
             }
         }
+    }
+
+    fun addRide(bikeId: Long, rideTitle: String, distance: Int, duration: Int, date: String) {
+        defaultCoroutine.launch {
+            rideRepository.addRide(
+                RideEntity(
+                    associatedBikeId = bikeId,
+                    rideTitle = rideTitle,
+                    distanceInKm = distance,
+                    durationInMinutes = duration,
+                    date = date
+                )
+            )
+        }
+    }
+
+    suspend fun getBike(bikeId: Long): BikeEntity {
+        return bikeRepository.getBike(bikeId)
     }
 }

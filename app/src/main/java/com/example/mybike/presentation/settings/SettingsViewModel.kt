@@ -1,4 +1,4 @@
-package com.example.mybike.settings
+package com.example.mybike.presentation.settings
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -46,9 +46,7 @@ class SettingsViewModel @Inject constructor(private val baseRepository: BaseRepo
     }
 
     fun getDefaultBike() {
-        viewModelScope.launch {
-            _defaultBike.value = baseRepository.getDefaultBike()
-        }
+        _defaultBike.value = baseRepository.getDefaultBike()
     }
 
     fun getServiceReminderNotificationStatus() {

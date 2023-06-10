@@ -1,19 +1,23 @@
-package com.example.mybike
+package com.example.mybike.presentation
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -22,6 +26,8 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,29 +36,39 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.window.Dialog
+import com.example.mybike.R
 import com.example.mybike.ui.theme.Black
 import com.example.mybike.ui.theme.Blue
 import com.example.mybike.ui.theme.BlueWithAlpha
@@ -97,6 +113,17 @@ fun CustomTopBar(
     )
 }
 
+@Composable
+fun TopBarAddAction(onAddBikeClicked: () -> Unit, text: String) {
+    Row(modifier = Modifier
+        .clickable { onAddBikeClicked() }
+        .padding(end = dimensionResource(id = R.dimen.d12))
+    ) {
+        Icon(imageVector = Icons.Default.Add, tint = White, contentDescription = null)
+        Text(text = text, color = White)
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit = {}, modifier: Modifier = Modifier, selectedItem: String = NONE, onSelectedItem: (value: String) -> Unit) {
@@ -126,8 +153,16 @@ fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit =
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(textColor = White, containerColor = DarkBlue, focusedBorderColor = Gray),
-                        textStyle = Typography.displayMedium
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = White,
+                            unfocusedTextColor = White,
+                            focusedContainerColor = DarkBlue,
+                            unfocusedContainerColor = DarkBlue,
+                            disabledContainerColor = DarkBlue,
+                            focusedBorderColor = Gray,
+                            disabledBorderColor = Gray,
+                            unfocusedBorderColor = Gray
+                        ), textStyle = Typography.displayMedium
                     )
 
                     DropdownMenu(
@@ -212,6 +247,27 @@ fun CustomThreeDotsDropdown(modifier: Modifier = Modifier, elements: List<ThreeD
             }
         }
     }
+}
+
+@Composable
+fun CustomProgressBar(progress: Float, modifier: Modifier = Modifier) {
+    Box(contentAlignment = CenterStart, modifier = modifier) {
+        Row(verticalAlignment = CenterVertically) {
+            Icon(painter = painterResource(id = R.drawable.loading_circle), contentDescription = null, tint = Blue)
+            Icon(painter = painterResource(id = R.drawable.loading_bar), contentDescription = null, tint = LightBlue)
+            Icon(painter = painterResource(id = R.drawable.loading_bolt), contentDescription = null, tint = White)
+        }
+        Row(verticalAlignment = CenterVertically) {
+            Icon(painter = painterResource(id = R.drawable.loading_over), contentDescription = null, tint = Blue, modifier = Modifier.fillMaxWidth(progress))
+            Icon(painter = painterResource(id = R.drawable.loading_wrench), contentDescription = null, tint = Blue)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewCustomProgressBar() {
+    CustomProgressBar(0.4f)
 }
 
 @Preview

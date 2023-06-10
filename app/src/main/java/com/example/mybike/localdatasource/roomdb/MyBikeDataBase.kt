@@ -8,12 +8,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.mybike.localdatasource.roomdb.bike.BikeDao
 import com.example.mybike.localdatasource.roomdb.bike.BikeEntity
+import com.example.mybike.localdatasource.roomdb.ride.RideDao
+import com.example.mybike.localdatasource.roomdb.ride.RideEntity
 
-@Database(version = 1, exportSchema = false, entities = [BikeEntity::class])
+@Database(version = 1, exportSchema = false, entities = [BikeEntity::class, RideEntity::class])
 @TypeConverters(Converters::class)
 abstract class MyBikeDataBase : RoomDatabase() {
 
     abstract fun bikeDao(): BikeDao
+    abstract fun rideDao(): RideDao
 
     companion object {
         private const val TAG = "[LocalDataSource]: MyBikeDataBase"

@@ -1,9 +1,7 @@
-package com.example.mybike.bikes
+package com.example.mybike.presentation.bikes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,18 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,25 +22,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.mybike.CustomButton
-import com.example.mybike.CustomThreeDotsDropdown
-import com.example.mybike.CustomTopBar
+import com.example.mybike.presentation.CustomButton
+import com.example.mybike.presentation.CustomProgressBar
+import com.example.mybike.presentation.CustomThreeDotsDropdown
+import com.example.mybike.presentation.CustomTopBar
 import com.example.mybike.R
 import com.example.mybike.localdatasource.roomdb.bike.BikeEntity
+import com.example.mybike.presentation.TopBarAddAction
 import com.example.mybike.ui.theme.Black
 import com.example.mybike.ui.theme.Gray
 import com.example.mybike.ui.theme.LightBlue
 import com.example.mybike.ui.theme.Typography
 import com.example.mybike.ui.theme.White
-import com.example.mybike.vo.Bike
+import com.example.mybike.vo.BikeToShow
 import com.example.mybike.vo.ThreeDotsDropdownItem
 import com.example.mybike.vo.WheelSize
 import com.example.mybike.vo.toBike
@@ -80,8 +69,7 @@ fun EmptyBikeScreen(onAddBikeClicked: () -> Unit) {
     Column(
         Modifier
             .background(Black)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomTopBar(title = stringResource(id = R.string.bikes_screen))
         Image(painter = painterResource(id = R.drawable.missing_bike_card), contentDescription = null, modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.d12)))
@@ -120,60 +108,51 @@ fun ContentBikeScreen(onAddBikeClicked: () -> Unit, bikeList: List<BikeEntity>, 
 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CustomTopBar(title = stringResource(id = R.string.bikes_screen), actions = { TopBarAddAction(onAddBikeClicked) })
+        CustomTopBar(title = stringResource(id = R.string.bikes_screen), actions = { TopBarAddAction(onAddBikeClicked, stringResource(id = R.string.add_bike)) })
         LazyColumn(modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.d8))) {
             items(bikeList.size) {
                 val bike = bikeList[it]
-                BikeItem(bike = bike.bikeType.toBike(), color = Color(bike.bikeColor), withSmallWheel = bike.inchWheelSize.toWheelSize() != WheelSize.BIG, bike, bikesViewModel = bikesViewModel)
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.d8)))
+                BikeItem(bikeToShow = bike.bikeType.toBike(), color = Color(bike.bikeColor), withSmallWheel = bike.inchWheelSize.toWheelSize() != WheelSize.BIG, bike, bikesViewModel = bikesViewModel)
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.d12)))
             }
         }
     }
 }
 
 @Composable
-fun BikeItem(bike: Bike, color: Color, withSmallWheel: Boolean, bikeEntity: BikeEntity, bikesViewModel: BikesViewModel) {
+fun BikeItem(bikeToShow: BikeToShow, color: Color, withSmallWheel: Boolean, bikeEntity: BikeEntity, bikesViewModel: BikesViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.d4)))
             .paint(painter = painterResource(id = R.drawable.layered_waves_dark_blue), contentScale = ContentScale.FillBounds)
-            .padding(horizontal = dimensionResource(id = R.dimen.d8), vertical = dimensionResource(id = R.dimen.d4)),
-        horizontalAlignment = Alignment.Start
+            .padding(horizontal = dimensionResource(id = R.dimen.d8), vertical = dimensionResource(id = R.dimen.d4)), horizontalAlignment = Alignment.Start
     ) {
         CustomThreeDotsDropdown(
-            modifier = Modifier.align(Alignment.End),
-            elements = listOf(
+            modifier = Modifier.align(Alignment.End), elements = listOf(
                 ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {}, White, Typography.titleSmall),
                 ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, {}, White, Typography.titleSmall)
             )
         )
         CustomBike(
-            bike = bike, color = color, withSmallWheel = withSmallWheel, modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+            bikeToShow = bikeToShow, color = color, withSmallWheel = withSmallWheel, modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Text(text = bikeEntity.bikeName, color = White, style = Typography.titleMedium)
-        BikeCharacteristics(title = stringResource(id = R.string.wheels), value = bikeEntity.inchWheelSize)
-        BikeCharacteristics(title = stringResource(id = R.string.service_in_characteristic), value = bikeEntity.distanceServiceDueInKm.toString() + bikesViewModel.currentDistanceUnit.name.lowercase())
-        
+        ItemCharacteristics(title = stringResource(id = R.string.wheels), value = bikeEntity.inchWheelSize)
+        ItemCharacteristics(title = stringResource(id = R.string.service_in_characteristic), value = bikeEntity.distanceServiceDueInKm.toString() + bikesViewModel.currentDistanceUnit.name.lowercase())
+
+        CustomProgressBar((bikeEntity.traveledDistanceInKm/bikeEntity.distanceServiceDueInKm).toFloat(), modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.d12)))
     }
 }
 
 @Composable
-fun BikeCharacteristics(title: String, value: String) {
+fun ItemCharacteristics(title: String, value: String) {
     Row {
-        Text(text = title, color = White, style = Typography.headlineMedium, modifier = Modifier.padding(end = dimensionResource(id = R.dimen.d4)))
+        Text(text = title, color = Gray, style = Typography.headlineMedium, modifier = Modifier.padding(end = dimensionResource(id = R.dimen.d4)))
         Text(text = value, color = White, style = Typography.titleMedium)
     }
 }
 
-@Composable
-fun TopBarAddAction(onAddBikeClicked: () -> Unit) {
-    Row(modifier = Modifier.clickable { onAddBikeClicked() }) {
-        Icon(imageVector = Icons.Default.Add, tint = Gray, contentDescription = null)
-        Text(text = stringResource(id = R.string.add_bike))
-    }
-}
 
 
 @Preview

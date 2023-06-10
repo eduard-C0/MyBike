@@ -18,4 +18,22 @@
     <string name="default_bike">Default Bike</string>
     <string name="required_field">Required field</string>
     <string name="wheels">Wheels: </string>
+    <string name="ride_title">Ride Title</string>
+    <string name="distance">Distance</string>
+    <string name="bike">Bike</string>
+    <string name="duration">Duration</string>
+    <string name="date">Date</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="zero">0</string>
+    <string name="select_duration">Select duration</string>
+    <string name="duration_separator">:</string>
+    <plurals name="hour_suffix">
+        <item quantity="one"> h, </item>
+        <item quantity="other"> hrs, </item>
+    </plurals>
+    <plurals name="minutes_suffix">
+        <item quantity="one"> min </item>
+        <item quantity="other"> mins </item>
+    </plurals>
 </resources>

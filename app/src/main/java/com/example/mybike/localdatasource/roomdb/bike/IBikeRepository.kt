@@ -10,7 +10,7 @@ interface IBikeRepository {
 
     suspend fun deleteBike(bikeEntity: BikeEntity): Int
 
-    suspend fun getAllBikes(): Flow<List<BikeEntity>>
+    fun getAllBikes(): Flow<List<BikeEntity>>
 
     suspend fun getBike(bikeId: Long): BikeEntity
 }

@@ -3,7 +3,7 @@ package com.example.mybike.vo
 import androidx.annotation.DrawableRes
 import com.example.mybike.R
 
-sealed class Bike {
+sealed class BikeToShow {
     abstract val bikeType: BikeType
 
     @get:DrawableRes
@@ -18,7 +18,7 @@ sealed class Bike {
     @get:DrawableRes
     abstract val bigWheel: Int
 
-    object MtbBike : Bike() {
+    object MtbBike : BikeToShow() {
         override val bikeType: BikeType
             get() = BikeType.MTB
         override val middle: Int
@@ -31,7 +31,7 @@ sealed class Bike {
             get() = R.drawable.bike_mtb_big_wheels
     }
 
-    object RoadBike : Bike() {
+    object RoadBike : BikeToShow() {
         override val bikeType: BikeType
             get() = BikeType.ROADBIKE
         override val middle: Int
@@ -44,7 +44,7 @@ sealed class Bike {
             get() = R.drawable.bike_roadbike_big_wheels
     }
 
-    object ElectricBike : Bike() {
+    object ElectricBike : BikeToShow() {
         override val bikeType: BikeType
             get() = BikeType.ELECTRIC
         override val middle: Int
@@ -58,7 +58,7 @@ sealed class Bike {
 
     }
 
-    object HybridBike : Bike() {
+    object HybridBike : BikeToShow() {
         override val bikeType: BikeType
             get() = BikeType.HYBRID
         override val middle: Int
