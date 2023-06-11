@@ -1,6 +1,6 @@
 package com.example.mybike.vo
 
-enum class WheelSize(val value: String) {
+enum class WheelSize(var value: String) {
     BIG("29\""), SMALL("28\"")
 }
 

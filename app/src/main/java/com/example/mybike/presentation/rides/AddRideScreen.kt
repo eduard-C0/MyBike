@@ -20,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -51,12 +52,11 @@ import com.example.mybike.ui.theme.White
 import com.example.mybike.utils.DURATION_FORMAT
 import com.example.mybike.utils.HOUR_SUFFIX
 import com.example.mybike.utils.MINUTES_SUFFIX
+import com.example.mybike.utils.NONE_ITEM
 import com.example.mybike.utils.toTime
 import com.example.mybike.vo.Time
 import java.text.SimpleDateFormat
 import java.util.Locale
-
-private const val NONE_ITEM = ""
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,6 +69,13 @@ fun AddRideScreen(rideId: Long?, ridesViewModel: AddRideViewModel, onExitButtonC
         }
     }
 
+    DisposableEffect(key1 = Unit) {
+        onDispose {
+            if (rideId != null){
+                ridesViewModel.resetRide()
+            }
+        }
+    }
     val bikesList = ridesViewModel.bikesList.collectAsState()
     val currentRide = ridesViewModel.currentRide.collectAsState()
     val bikeName = ridesViewModel.bikeName.collectAsState()
@@ -96,7 +103,7 @@ fun AddRideScreen(rideId: Long?, ridesViewModel: AddRideViewModel, onExitButtonC
                 .padding(horizontal = dimensionResource(id = R.dimen.d8))
         ) {
             CustomTopBar(
-                title = if(rideId == null) stringResource(id = R.string.add_ride) else stringResource(id = R.string.edit_ride),
+                title = if (rideId == null) stringResource(id = R.string.add_ride) else stringResource(id = R.string.edit_ride),
                 actions = {
                     Icon(painter = painterResource(id = R.drawable.icon_x), contentDescription = null, tint = White, modifier = Modifier
                         .clickable { onExitButtonClicked() }

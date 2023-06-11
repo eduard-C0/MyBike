@@ -65,7 +65,7 @@ import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RidesScreen(ridesViewModel: RidesViewModel, onAddRideClicked: () -> Unit, onEditRideClick: (rideId: Long) -> Unit) {
+fun RidesScreen(ridesViewModel: RidesViewModel, onAddRideClicked: () -> Unit, onEditRideClick: (rideId: Long?) -> Unit) {
     LaunchedEffect(key1 = Unit) {
         ridesViewModel.getRides()
     }
@@ -109,7 +109,7 @@ fun EmptyRidesScreen(onAddRideClicked: () -> Unit) {
 }
 
 @Composable
-fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideItem>, ridesViewModel: RidesViewModel, onEditRideClick: (rideId: Long) -> Unit) {
+fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideItem>, ridesViewModel: RidesViewModel, onEditRideClick: (rideId: Long?) -> Unit) {
     Column(
         Modifier
             .fillMaxSize()

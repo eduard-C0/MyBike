@@ -36,6 +36,7 @@ import com.example.mybike.ui.theme.DarkBlue
 import com.example.mybike.ui.theme.Gray
 import com.example.mybike.ui.theme.Typography
 import com.example.mybike.ui.theme.White
+import com.example.mybike.utils.NONE_ITEM
 import com.example.mybike.utils.SuffixTransformer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,7 +117,7 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
             CustomLabel = {
                 CustomLabel(stringResource(id = R.string.default_bike), iconId = R.drawable.icon_required, textColor = Gray, iconTint = Gray)
             },
-            selectedItem = defaultBike.value,
+            selectedItem = defaultBike.value.ifBlank { NONE_ITEM },
             onSelectedItem = {},
             modifier = Modifier
                 .padding(horizontal = dimensionResource(id = R.dimen.d8))

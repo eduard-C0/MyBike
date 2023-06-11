@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.R
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -81,15 +82,20 @@ class MainActivity : ComponentActivity() {
                     bikesViewModel,
                     ridesViewModel,
                     { bikeId -> navController.navigate(Screens.BIKE_DETAILS_SCREEN.name + "/$bikeId") },
-                    { rideId -> navController.navigate(Screens.ADD_RIDE.name + "/$rideId") }
+                    { rideId -> navController.navigate(Screens.ADD_RIDE.name + "?$RIDE_ID=$rideId") }
                 )
             }
             composable(Screens.ADD_BIKE.name) {
                 AddBikeScreen(bikesViewModel = bikesViewModel, { navController.popBackStack() }, { navController.popBackStack() })
             }
-            composable(Screens.ADD_RIDE.name + "/{$RIDE_ID}", arguments = listOf(navArgument(RIDE_ID) { type = NavType.LongType })) {
+            composable(Screens.ADD_RIDE.name + "?$RIDE_ID={$RIDE_ID}", arguments = listOf(navArgument(RIDE_ID) {
+                defaultValue = 0L
+            })) {
                 val rideId = it.arguments?.getLong(RIDE_ID)
-                AddRideScreen(rideId, ridesViewModel = addRidesViewModel, { navController.popBackStack() }, { navController.popBackStack() })
+                Log.d("RideId", rideId.toString())
+                Log.d("RideId", it.destination.route.toString())
+                AddRideScreen(if (rideId == 0L) null else
+                    rideId, ridesViewModel = addRidesViewModel, { navController.popBackStack() }, { navController.popBackStack() })
 
             }
             composable(Screens.BIKE_DETAILS_SCREEN.name + "/{$BIKE_ID}", arguments = listOf(navArgument(BIKE_ID) { type = NavType.LongType })) {

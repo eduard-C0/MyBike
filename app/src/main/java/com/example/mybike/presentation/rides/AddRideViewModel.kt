@@ -97,4 +97,8 @@ class AddRideViewModel @Inject constructor(
 
         }
     }
+
+    fun resetRide(){
+       _currentRide.value= null
+    }
 }

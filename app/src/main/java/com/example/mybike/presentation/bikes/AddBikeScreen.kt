@@ -77,6 +77,7 @@ import com.example.mybike.ui.theme.DarkBlue
 import com.example.mybike.ui.theme.Gray
 import com.example.mybike.ui.theme.Typography
 import com.example.mybike.ui.theme.White
+import com.example.mybike.utils.toWheelSize
 import com.example.mybike.vo.BikeToShow
 import com.example.mybike.vo.WheelSize
 import kotlin.math.absoluteValue
@@ -86,6 +87,7 @@ import kotlin.math.absoluteValue
 fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit, onExitButtonClicked: () -> Unit) {
     var bikeNameInputText by remember { mutableStateOf(TextFieldValue("")) }
     var serviceInInputText by remember { mutableStateOf(TextFieldValue("")) }
+    var wheelSize by remember { mutableStateOf(WheelSize.BIG) }
     var defaultBikeSwitch by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -128,7 +130,7 @@ fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit, 
                         focusedBorderColor = Gray,
                     ),
                     textStyle = Typography.displayMedium,
-                    maxLines= 1,
+                    maxLines = 1,
                     isError = bikeNameInputText.text.isBlank(),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -139,8 +141,11 @@ fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit, 
 
                 CustomDropDown(
                     elements = listOf(WheelSize.BIG.value, WheelSize.SMALL.value),
-                    onSelectedItem = { value -> bikesViewModel.saveWheelSize(value) },
-                    selectedItem = WheelSize.BIG.value,
+                    onSelectedItem = { value ->
+                        bikesViewModel.saveWheelSize(value)
+                        wheelSize = value.toWheelSize()
+                    },
+                    selectedItem = wheelSize.value,
                     modifier = Modifier
                         .padding(bottom = dimensionResource(id = R.dimen.d12))
                 )
@@ -163,7 +168,7 @@ fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit, 
                         disabledBorderColor = Gray,
                         unfocusedBorderColor = Gray
                     ),
-                    maxLines= 1,
+                    maxLines = 1,
                     textStyle = Typography.displayMedium,
                     isError = serviceInInputText.text.isBlank(),
                     modifier = Modifier.fillMaxWidth(),
@@ -221,7 +226,10 @@ fun CustomBike(bikeToShow: BikeToShow, color: Color?, withSmallWheel: Boolean, m
         contentAlignment = Alignment.TopCenter
     ) {
         Image(painter = painterResource(id = if (withSmallWheel) bikeToShow.smallWheel else bikeToShow.bigWheel), contentDescription = null)
-        color?.let { Icon(painter = painterResource(id = bikeToShow.middle), contentDescription = null, tint = it) } ?: Icon(painter = painterResource(id = bikeToShow.middle), contentDescription = null)
+        color?.let { Icon(painter = painterResource(id = bikeToShow.middle), contentDescription = null, tint = it) } ?: Icon(
+            painter = painterResource(id = bikeToShow.middle),
+            contentDescription = null
+        )
         Image(painter = painterResource(id = bikeToShow.over), contentDescription = null)
     }
 }

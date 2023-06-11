@@ -56,7 +56,7 @@ fun MainScreen(
     bikesViewModel: BikesViewModel,
     ridesViewModel: RidesViewModel,
     onItemClicked: (bikeId: Long) -> Unit,
-    onRideEditClicked: (rideId: Long) -> Unit
+    onRideEditClicked: (rideId: Long?) -> Unit
 ) {
     val bottomNavItems = listOf(
         Bikes,
