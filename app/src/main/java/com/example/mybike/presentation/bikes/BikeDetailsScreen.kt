@@ -19,8 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
@@ -30,11 +28,8 @@ import com.example.mybike.R
 import com.example.mybike.presentation.CustomProgressBar
 import com.example.mybike.presentation.CustomTopBar
 import com.example.mybike.presentation.rides.RideItem
-import com.example.mybike.presentation.rides.StatisticsBarChart
 import com.example.mybike.ui.theme.BackgroundColor
-import com.example.mybike.ui.theme.Black
 import com.example.mybike.ui.theme.DarkBlue
-import com.example.mybike.ui.theme.Gray
 import com.example.mybike.ui.theme.LightBlue
 import com.example.mybike.ui.theme.Typography
 import com.example.mybike.ui.theme.White

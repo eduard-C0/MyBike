@@ -29,6 +29,12 @@
     <string name="select_duration">Select duration</string>
     <string name="duration_separator">:</string>
     <string name="total_rides_distance">Total Rides Distance</string>
+    <string name="all_rides_statistics">All Rides Statistics</string>
+    <string name="road">Road</string>
+    <string name="mtb">MTB</string>
+    <string name="city">City</string>
+    <string name="ebike">E-Bike</string>
+    <string name="total_km">Total: %1$sKM</string>
     <plurals name="hour_suffix">
         <item quantity="one"> h, </item>
         <item quantity="other"> hrs, </item>

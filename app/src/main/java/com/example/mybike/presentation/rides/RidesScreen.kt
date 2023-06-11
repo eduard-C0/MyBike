@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,8 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.mybike.presentation.CustomButton
 import com.example.mybike.presentation.CustomTopBar
 import com.example.mybike.R
@@ -47,6 +51,7 @@ import com.example.mybike.ui.theme.White
 import com.example.mybike.utils.HOUR_SUFFIX
 import com.example.mybike.utils.MINUTES_SUFFIX
 import com.example.mybike.utils.toTime
+import com.example.mybike.vo.BikeType
 import com.example.mybike.vo.DisplayRideItem
 import com.example.mybike.vo.DistanceUnit
 import com.example.mybike.vo.ThreeDotsDropdownItem
@@ -115,12 +120,11 @@ fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideIte
         CustomTopBar(title = stringResource(id = R.string.rides_screen), actions = { TopBarAddAction(onAddRideClicked, stringResource(id = R.string.add_ride)) })
 
         LazyColumn(modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.d8))) {
+            item {
+                BikeChart(modifier = Modifier, ridesViewModel)
+            }
             items(rideList.size) {
                 when (val ride = rideList[it]) {
-                    is DisplayRideItem.Chart -> {
-                        StatisticsBarChart()
-                    }
-
                     is DisplayRideItem.Divider -> {
                         Text(text = ride.text, color = Gray, modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.d8)))
                     }
@@ -129,7 +133,7 @@ fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideIte
                         RideItem(
                             ride, ridesViewModel.currentDistanceUnit, BackgroundColor, listOf(
                                 ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {}, White, Typography.titleSmall),
-                                ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, {ridesViewModel.deleteRide(ride)}, White, Typography.titleSmall)
+                                ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, { ridesViewModel.deleteRide(ride) }, White, Typography.titleSmall)
                             )
                         )
                     }
@@ -138,35 +142,6 @@ fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideIte
             }
         }
     }
-}
-
-@Composable
-fun StatisticsBarChart() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        BarChart(
-            barChartData = BarChartData(
-                bars = listOf(
-                    BarChartData.Bar(label = "Road", value = 100f, color = BikeRed),
-                    BarChartData.Bar(label = "MTB", value = 80f, color = BikeYellow),
-                    BarChartData.Bar(label = "Hybrid", value = 50f, color = BikeLime),
-                    BarChartData.Bar(label = "11.000", value = 30f, color = White)
-                ),
-                startAtZero = true,
-                padBy = 50f
-            ),
-            // Optional properties.
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth()
-                .background(BackgroundColor),
-            animation = simpleChartAnimation(),
-            barDrawer = SimpleBarDrawer(),
-            xAxisDrawer = SimpleXAxisDrawer(),
-            yAxisDrawer = SimpleYAxisDrawer(),
-            labelDrawer = SimpleValueDrawer()
-        )
-    }
-
 }
 
 
@@ -203,6 +178,115 @@ fun RideItem(rideEntity: DisplayRideItem.RideItemData, currentDistanceUnit: Dist
         ItemCharacteristics(title = stringResource(id = R.string.date) + stringResource(id = R.string.duration_separator), value = rideEntity.date)
     }
 }
+
+@Composable
+fun BikeChart(modifier: Modifier, ridesViewModel: RidesViewModel) {
+
+    val scope = rememberCoroutineScope()
+    val roadDistance = ridesViewModel.getDistanceForType(BikeType.ROADBIKE, scope).collectAsState()
+    val mtb = ridesViewModel.getDistanceForType(BikeType.MTB, scope).collectAsState()
+    val city = ridesViewModel.getDistanceForType(BikeType.HYBRID, scope).collectAsState()
+    val ebike = ridesViewModel.getDistanceForType(BikeType.ELECTRIC, scope).collectAsState()
+
+    val totalKm = ridesViewModel.getTotalDistance(scope).collectAsState()
+
+    Box(
+        modifier = modifier
+            .height(320.dp)
+            .background(
+                BackgroundColor,
+                shape = RoundedCornerShape(dimensionResource(id = R.dimen.d4))
+            )
+    ) {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(painter = painterResource(id = R.drawable.icon_stats), contentDescription = null, tint = White, modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.d4)))
+                Text(
+                    text = stringResource(id = R.string.all_rides_statistics),
+                    style = Typography.titleMedium,
+                    color = White,
+                    modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.d8), horizontal = dimensionResource(id = R.dimen.d4))
+                )
+            }
+
+            BarChart(
+                barChartData = BarChartData(
+                    bars = listOf(
+                        BarChartData.Bar(
+                            label = roadDistance.value.toString(),
+                            value = roadDistance.value.toFloat(),
+                            color = BikeRed
+                        ),
+                        BarChartData.Bar(
+                            label = mtb.value.toString(),
+                            value = mtb.value.toFloat(),
+                            color = BikeYellow
+                        ),
+                        BarChartData.Bar(
+                            label = city.value.toString(),
+                            value = city.value.toFloat(),
+                            color = BikeLime
+                        ),
+                        BarChartData.Bar(
+                            label = ebike.value.toString(),
+                            value = ebike.value.toFloat(),
+                            color = Color.White
+                        )
+                    )
+                ),
+                // Optional properties.
+                modifier = Modifier
+                    .padding(top = dimensionResource(id = R.dimen.d8))
+                    .weight(1f, false),
+                animation = simpleChartAnimation(),
+                barDrawer = SimpleBarDrawer(),
+                xAxisDrawer = SimpleXAxisDrawer(),
+                yAxisDrawer = SimpleYAxisDrawer(labelTextSize = 1.sp),
+                labelDrawer = SimpleValueDrawer(drawLocation = SimpleValueDrawer.DrawLocation.Inside)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = dimensionResource(id = R.dimen.d48),
+                        end = dimensionResource(id = R.dimen.d12)
+                    )
+            ) {
+                BikeLabel(string = stringResource(id = R.string.road))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.d24)))
+                BikeLabel(string = stringResource(id = R.string.mtb))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.d24)))
+                BikeLabel(string = stringResource(id = R.string.city))
+                Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.d24)))
+                BikeLabel(string = stringResource(id = R.string.ebike))
+            }
+            Text(
+                text = stringResource(id = R.string.total_km, totalKm.value),
+                color = White, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = dimensionResource(
+                            id = R.dimen.d8
+                        )
+                    ),
+                style = Typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun BikeLabel(string: String) {
+    Text(
+        text = string,
+        color = Gray,
+        style = Typography.titleMedium,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.width(62.dp)
+    )
+}
+
 
 @Preview
 @Composable
