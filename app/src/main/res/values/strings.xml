@@ -35,6 +35,8 @@
     <string name="city">City</string>
     <string name="ebike">E-Bike</string>
     <string name="total_km">Total: %1$sKM</string>
+    <string name="save">Save</string>
+    <string name="edit_ride">Edit Ride</string>
     <plurals name="hour_suffix">
         <item quantity="one"> h, </item>
         <item quantity="other"> hrs, </item>

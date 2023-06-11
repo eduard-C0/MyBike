@@ -24,7 +24,7 @@ class RideRepository @Inject constructor(private val myBikeDataBase: MyBikeDataB
         return myBikeDataBase.rideDao().getAllRides()
     }
 
-    override suspend fun getRide(rideId: Long): RideEntity {
+    override suspend fun getRide(rideId: Long): RideEntity? {
         return myBikeDataBase.rideDao().getBike(rideId)
     }
 }

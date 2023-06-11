@@ -65,7 +65,7 @@ import com.github.tehras.charts.piechart.animation.simpleChartAnimation
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RidesScreen(ridesViewModel: RidesViewModel, onAddRideClicked: () -> Unit) {
+fun RidesScreen(ridesViewModel: RidesViewModel, onAddRideClicked: () -> Unit, onEditRideClick: (rideId: Long) -> Unit) {
     LaunchedEffect(key1 = Unit) {
         ridesViewModel.getRides()
     }
@@ -74,7 +74,7 @@ fun RidesScreen(ridesViewModel: RidesViewModel, onAddRideClicked: () -> Unit) {
     if (ridesList.value.isEmpty()) {
         EmptyRidesScreen { onAddRideClicked() }
     } else {
-        ContentRideScree(onAddRideClicked, ridesList.value, ridesViewModel)
+        ContentRideScree(onAddRideClicked, ridesList.value, ridesViewModel, onEditRideClick)
     }
 
 }
@@ -109,7 +109,7 @@ fun EmptyRidesScreen(onAddRideClicked: () -> Unit) {
 }
 
 @Composable
-fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideItem>, ridesViewModel: RidesViewModel) {
+fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideItem>, ridesViewModel: RidesViewModel, onEditRideClick: (rideId: Long) -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -132,7 +132,7 @@ fun ContentRideScree(onAddRideClicked: () -> Unit, rideList: List<DisplayRideIte
                     is DisplayRideItem.RideItemData -> {
                         RideItem(
                             ride, ridesViewModel.currentDistanceUnit, BackgroundColor, listOf(
-                                ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {}, White, Typography.titleSmall),
+                                ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {onEditRideClick(ride.rideId)}, White, Typography.titleSmall),
                                 ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, { ridesViewModel.deleteRide(ride) }, White, Typography.titleSmall)
                             )
                         )

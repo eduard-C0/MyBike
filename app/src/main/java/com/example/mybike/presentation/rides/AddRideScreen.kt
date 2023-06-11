@@ -1,6 +1,7 @@
 package com.example.mybike.presentation.rides
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.example.mybike.R
+import com.example.mybike.localdatasource.roomdb.ride.RideEntity
 import com.example.mybike.presentation.CustomButton
 import com.example.mybike.presentation.CustomDropDown
 import com.example.mybike.presentation.CustomLabel
@@ -47,6 +51,7 @@ import com.example.mybike.ui.theme.White
 import com.example.mybike.utils.DURATION_FORMAT
 import com.example.mybike.utils.HOUR_SUFFIX
 import com.example.mybike.utils.MINUTES_SUFFIX
+import com.example.mybike.utils.toTime
 import com.example.mybike.vo.Time
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -56,22 +61,32 @@ private const val NONE_ITEM = ""
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddRideScreen(ridesViewModel: AddRideViewModel, onExitButtonClicked: () -> Unit, onAddBikeClicked: () -> Unit) {
+fun AddRideScreen(rideId: Long?, ridesViewModel: AddRideViewModel, onExitButtonClicked: () -> Unit, onAddBikeClicked: () -> Unit) {
     LaunchedEffect(key1 = Unit) {
         ridesViewModel.getBikes()
+        if (rideId != null) {
+            ridesViewModel.getRide(rideId)
+        }
     }
 
     val bikesList = ridesViewModel.bikesList.collectAsState()
+    val currentRide = ridesViewModel.currentRide.collectAsState()
+    val bikeName = ridesViewModel.bikeName.collectAsState()
+    val name = bikeName.value
 
-    var rideTitleInputText by remember { mutableStateOf(TextFieldValue("")) }
-    var selectedBike by remember { mutableStateOf("") }
-    var distanceInputText by remember { mutableStateOf(TextFieldValue("")) }
-    var durationInputText by remember { mutableStateOf(TextFieldValue("")) }
-    var dateInputText by remember { mutableStateOf(TextFieldValue("")) }
+    val ride = currentRide.value ?: RideEntity(0, 0, "", 0, 0, "")
+    val hour = ride.durationInMinutes.toTime().hour
+    val minute = ride.durationInMinutes.toTime().minute
+
+    var rideTitleInputText by remember(ride) { mutableStateOf(TextFieldValue(ride.rideTitle ?: "")) }
+    var selectedBike by remember(name) { mutableStateOf(name ?: "") }
+    var distanceInputText by remember(ride) { mutableStateOf(TextFieldValue(if (ride.distanceInKm == 0) "" else ride.distanceInKm.toString())) }
+    var durationInputText by remember(ride) { mutableStateOf(TextFieldValue(hour.toString() + HOUR_SUFFIX + minute.toString() + MINUTES_SUFFIX)) }
+    var dateInputText by remember(ride) { mutableStateOf(TextFieldValue(ride.date)) }
     var openDatePickerDialog by remember { mutableStateOf(false) }
     var openTimePickerDialog by remember { mutableStateOf(false) }
-    var initialHour by remember { mutableStateOf("") }
-    var initialMinute by remember { mutableStateOf("") }
+    var initialHour by remember(ride) { mutableStateOf(if (hour == 0) "" else hour.toString()) }
+    var initialMinute by remember(ride) { mutableStateOf(if (minute == 0) "" else minute.toString()) }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -81,7 +96,7 @@ fun AddRideScreen(ridesViewModel: AddRideViewModel, onExitButtonClicked: () -> U
                 .padding(horizontal = dimensionResource(id = R.dimen.d8))
         ) {
             CustomTopBar(
-                title = stringResource(id = R.string.add_ride),
+                title = if(rideId == null) stringResource(id = R.string.add_ride) else stringResource(id = R.string.edit_ride),
                 actions = {
                     Icon(painter = painterResource(id = R.drawable.icon_x), contentDescription = null, tint = White, modifier = Modifier
                         .clickable { onExitButtonClicked() }
@@ -122,7 +137,7 @@ fun AddRideScreen(ridesViewModel: AddRideViewModel, onExitButtonClicked: () -> U
             CustomDropDown(
                 elements = bikesList.value.map { it.bikeName },
                 onSelectedItem = { value -> selectedBike = value },
-                selectedItem = NONE_ITEM,
+                selectedItem = selectedBike.ifBlank { NONE_ITEM },
                 modifier = Modifier
                     .padding(bottom = dimensionResource(id = R.dimen.d12))
             )
@@ -250,17 +265,20 @@ fun AddRideScreen(ridesViewModel: AddRideViewModel, onExitButtonClicked: () -> U
                     durationInputText = TextFieldValue(time.hour.toString() + HOUR_SUFFIX + time.minute.toString() + MINUTES_SUFFIX)
                     initialHour = time.hour.toString()
                     initialMinute = time.minute.toString()
-                    ridesViewModel.saveDuration(time)
                     openTimePickerDialog = false
                 }
             )
         }
 
         CustomButton(
-            text = stringResource(id = R.string.add_ride),
+            text = if (rideId == null) stringResource(id = R.string.add_ride) else stringResource(id = R.string.save),
             enabled = selectedBike.isNotBlank() && distanceInputText.text.isNotBlank() && durationInputText.text.isNotBlank() && dateInputText.text.isNotBlank(),
             onClick = {
-                ridesViewModel.addRide(selectedBike, rideTitleInputText.text, distanceInputText.text, dateInputText.text)
+                if (rideId != null) {
+                    ridesViewModel.updateRide(rideId, selectedBike, rideTitleInputText.text, distanceInputText.text, dateInputText.text, initialHour, initialMinute)
+                } else {
+                    ridesViewModel.addRide(selectedBike, rideTitleInputText.text, distanceInputText.text, dateInputText.text, initialHour, initialMinute)
+                }
                 onAddBikeClicked()
             },
             modifier = Modifier

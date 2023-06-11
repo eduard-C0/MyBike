@@ -55,7 +55,8 @@ fun MainScreen(
     settingsViewModel: SettingsViewModel,
     bikesViewModel: BikesViewModel,
     ridesViewModel: RidesViewModel,
-    onItemClicked: (bikeId: Long) -> Unit
+    onItemClicked: (bikeId: Long) -> Unit,
+    onRideEditClicked: (rideId: Long) -> Unit
 ) {
     val bottomNavItems = listOf(
         Bikes,
@@ -75,7 +76,7 @@ fun MainScreen(
                     BikesScreen(onAddBikeClicked, bikesViewModel, onItemClicked)
                 }
                 composable(Screens.RIDES.name) {
-                    RidesScreen(ridesViewModel, onAddRideClicked)
+                    RidesScreen(ridesViewModel, onAddRideClicked, onRideEditClicked)
                 }
                 composable(Screens.SETTINGS.name) {
                     SettingsScreen(settingsViewModel)
@@ -112,6 +113,6 @@ fun BottomNavigation(items: List<BottomNavItem>, navController: NavController) {
 @Composable
 fun PreviewMainScreen() {
     MyBikeTheme {
-        MainScreen({}, {}, hiltViewModel(), hiltViewModel(), hiltViewModel(), {})
+        MainScreen({}, {}, hiltViewModel(), hiltViewModel(), hiltViewModel(), {}, {})
     }
 }

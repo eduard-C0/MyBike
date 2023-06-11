@@ -12,5 +12,5 @@ interface IRideRepository {
 
     fun getAllRides(): Flow<List<RideEntity>>
 
-    suspend fun getRide(rideId: Long): RideEntity
+    suspend fun getRide(rideId: Long): RideEntity?
 }

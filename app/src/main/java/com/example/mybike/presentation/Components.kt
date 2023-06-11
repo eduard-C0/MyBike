@@ -129,7 +129,6 @@ fun TopBarAddAction(onAddBikeClicked: () -> Unit, text: String) {
 @Composable
 fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit = {}, modifier: Modifier = Modifier, selectedItem: String = NONE, onSelectedItem: (value: String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember(selectedItem) { mutableStateOf(selectedItem.ifBlank { NONE }) }
 
     Box(
         modifier = modifier
@@ -147,7 +146,7 @@ fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit =
                 CustomLabel()
                 Column(verticalArrangement = Arrangement.Center) {
                     OutlinedTextField(
-                        value = selectedText,
+                        value = selectedItem,
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { CustomTrailingIcon(expanded = expanded, color = White) },
@@ -177,7 +176,6 @@ fun CustomDropDown(elements: List<String>, CustomLabel: @Composable () -> Unit =
                             DropdownMenuItem(
                                 text = { Text(text = item) },
                                 onClick = {
-                                    selectedText = item
                                     onSelectedItem(item)
                                     expanded = false
                                 },

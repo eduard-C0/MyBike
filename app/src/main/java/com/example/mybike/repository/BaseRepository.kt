@@ -109,6 +109,10 @@ class BaseRepository @Inject constructor(
         return bikeRepository.getBike(bikeId)
     }
 
+    suspend fun getRide(rideId: Long): RideEntity? {
+        return rideRepository.getRide(rideId)
+    }
+
     suspend fun getBikeWithRides(bikeId: Long): BikeWithRides {
         return bikeRepository.getBikeWithRides(bikeId)
     }
@@ -125,5 +129,9 @@ class BaseRepository @Inject constructor(
 
     suspend fun deleteRide(rideEntity: RideEntity) {
         rideRepository.deleteRide(rideEntity)
+    }
+
+    suspend fun updateRide(rideEntity: RideEntity) {
+        rideRepository.updateRide(rideEntity)
     }
 }

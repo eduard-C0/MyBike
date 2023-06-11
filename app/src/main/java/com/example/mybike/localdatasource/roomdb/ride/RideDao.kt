@@ -24,5 +24,5 @@ interface RideDao {
     fun getAllRides(): Flow<List<RideEntity>>
 
     @Query("SELECT * FROM rides WHERE rideId= :rideId")
-    fun getBike(rideId: Long): RideEntity
+    fun getBike(rideId: Long): RideEntity?
 }

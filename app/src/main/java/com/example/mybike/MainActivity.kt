@@ -34,6 +34,7 @@ import com.example.mybike.vo.Screens
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val BIKE_ID = "bikeId"
+private const val RIDE_ID = "rideId"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -79,13 +80,17 @@ class MainActivity : ComponentActivity() {
                     settingsViewModel,
                     bikesViewModel,
                     ridesViewModel,
-                    { bikeId -> navController.navigate(Screens.BIKE_DETAILS_SCREEN.name + "/$bikeId") })
+                    { bikeId -> navController.navigate(Screens.BIKE_DETAILS_SCREEN.name + "/$bikeId") },
+                    { rideId -> navController.navigate(Screens.ADD_RIDE.name + "/$rideId") }
+                )
             }
             composable(Screens.ADD_BIKE.name) {
                 AddBikeScreen(bikesViewModel = bikesViewModel, { navController.popBackStack() }, { navController.popBackStack() })
             }
-            composable(Screens.ADD_RIDE.name) {
-                AddRideScreen(ridesViewModel = addRidesViewModel, { navController.popBackStack() }, { navController.popBackStack() })
+            composable(Screens.ADD_RIDE.name + "/{$RIDE_ID}", arguments = listOf(navArgument(RIDE_ID) { type = NavType.LongType })) {
+                val rideId = it.arguments?.getLong(RIDE_ID)
+                AddRideScreen(rideId, ridesViewModel = addRidesViewModel, { navController.popBackStack() }, { navController.popBackStack() })
+
             }
             composable(Screens.BIKE_DETAILS_SCREEN.name + "/{$BIKE_ID}", arguments = listOf(navArgument(BIKE_ID) { type = NavType.LongType })) {
                 val bikeId = it.arguments?.getLong(BIKE_ID)
