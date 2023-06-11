@@ -1,14 +1,10 @@
 
 h
 8app/src/main/java/com/example/mybike/vo/BottomNavItem.kt,1/6/169660568059337cca327d35b7479879db48e1c4
-?
-settings.gradle,0/5/05efc8b1657769a27696d478ded1e95f38737233
 f
 6app/src/main/java/com/example/mybike/ui/theme/Theme.kt,1/3/136ca64846f2c2cb222d86b2e45510bc778810c4
 d
 4app/src/main/java/com/example/mybike/SplashScreen.kt,4/6/4673bbd4ff1157b31fb872b37bc318b9ea3eb673
-p
-@app/src/main/java/com/example/mybike/vo/ThreeDotsDropdownItem.kt,6/7/6765556658c2ba3c90ba5340d00e09ac61e5ff71
 i
 9app/src/main/java/com/example/mybike/rides/RidesScreen.kt,9/d/9da54f8a7c357b211b1c871ebb5175c253fc4a63
 i

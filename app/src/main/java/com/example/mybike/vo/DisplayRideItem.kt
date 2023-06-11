@@ -2,6 +2,7 @@ package com.example.mybike.vo
 
 sealed class DisplayRideItem {
 
+    data class Chart(val string: String): DisplayRideItem()
     data class Divider(val text: String) : DisplayRideItem()
 
     data class RideItemData(

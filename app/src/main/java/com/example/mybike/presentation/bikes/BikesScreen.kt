@@ -2,6 +2,7 @@ package com.example.mybike.presentation.bikes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +49,7 @@ import com.example.mybike.vo.toWheelSize
 
 
 @Composable
-fun BikesScreen(onAddBikeClicked: () -> Unit, bikeViewModel: BikesViewModel) {
+fun BikesScreen(onAddBikeClicked: () -> Unit, bikeViewModel: BikesViewModel, onItemClicked: (bikeId: Long) -> Unit) {
     LaunchedEffect(key1 = Unit) {
         bikeViewModel.getBikes()
     }
@@ -60,7 +61,7 @@ fun BikesScreen(onAddBikeClicked: () -> Unit, bikeViewModel: BikesViewModel) {
             onAddBikeClicked()
         }
     } else {
-        ContentBikeScreen(onAddBikeClicked, bikesList.value, bikeViewModel)
+        ContentBikeScreen(onAddBikeClicked, bikesList.value, bikeViewModel, onItemClicked)
     }
 }
 
@@ -73,7 +74,7 @@ fun EmptyBikeScreen(onAddBikeClicked: () -> Unit) {
     ) {
         CustomTopBar(title = stringResource(id = R.string.bikes_screen))
         Image(painter = painterResource(id = R.drawable.missing_bike_card), contentDescription = null, modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.d12)))
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Icon(
                 painter = painterResource(id = R.drawable.dotted_line),
                 contentDescription = null,
@@ -90,17 +91,21 @@ fun EmptyBikeScreen(onAddBikeClicked: () -> Unit) {
                 textAlign = TextAlign.Center,
                 style = Typography.displayMedium
             )
+
+            CustomButton(
+                text = stringResource(id = R.string.add_bike), enabled = true, onClick = onAddBikeClicked, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(id = R.dimen.d12))
+                    .align(Alignment.BottomCenter)
+            )
         }
-        CustomButton(
-            text = stringResource(id = R.string.add_bike), enabled = true, onClick = onAddBikeClicked, modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.d12))
-        )
     }
 }
 
 @Composable
-fun ContentBikeScreen(onAddBikeClicked: () -> Unit, bikeList: List<BikeEntity>, bikesViewModel: BikesViewModel) {
+fun ContentBikeScreen(
+    onAddBikeClicked: () -> Unit, bikeList: List<BikeEntity>, bikesViewModel: BikesViewModel, onItemClicked: (bikeId: Long) -> Unit
+) {
     Column(
         Modifier
             .fillMaxSize()
@@ -112,7 +117,14 @@ fun ContentBikeScreen(onAddBikeClicked: () -> Unit, bikeList: List<BikeEntity>, 
         LazyColumn(modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.d8))) {
             items(bikeList.size) {
                 val bike = bikeList[it]
-                BikeItem(bikeToShow = bike.bikeType.toBike(), color = Color(bike.bikeColor), withSmallWheel = bike.inchWheelSize.toWheelSize() != WheelSize.BIG, bike, bikesViewModel = bikesViewModel)
+                BikeItem(
+                    bikeToShow = bike.bikeType.toBike(),
+                    color = Color(bike.bikeColor),
+                    withSmallWheel = bike.inchWheelSize.toWheelSize() != WheelSize.BIG,
+                    bike,
+                    bikesViewModel = bikesViewModel,
+                    onItemClicked
+                )
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.d12)))
             }
         }
@@ -120,18 +132,27 @@ fun ContentBikeScreen(onAddBikeClicked: () -> Unit, bikeList: List<BikeEntity>, 
 }
 
 @Composable
-fun BikeItem(bikeToShow: BikeToShow, color: Color, withSmallWheel: Boolean, bikeEntity: BikeEntity, bikesViewModel: BikesViewModel) {
+fun BikeItem(
+    bikeToShow: BikeToShow,
+    color: Color,
+    withSmallWheel: Boolean,
+    bikeEntity: BikeEntity,
+    bikesViewModel: BikesViewModel,
+    onItemClicked: (bikeId: Long) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.d4)))
             .paint(painter = painterResource(id = R.drawable.layered_waves_dark_blue), contentScale = ContentScale.FillBounds)
-            .padding(horizontal = dimensionResource(id = R.dimen.d8), vertical = dimensionResource(id = R.dimen.d4)), horizontalAlignment = Alignment.Start
+            .padding(horizontal = dimensionResource(id = R.dimen.d8), vertical = dimensionResource(id = R.dimen.d4))
+            .clickable { onItemClicked(bikeEntity.bikeId) },
+        horizontalAlignment = Alignment.Start
     ) {
         CustomThreeDotsDropdown(
             modifier = Modifier.align(Alignment.End), elements = listOf(
                 ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {}, White, Typography.titleSmall),
-                ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, {}, White, Typography.titleSmall)
+                ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, { bikesViewModel.deleteBike(bikeEntity) }, White, Typography.titleSmall)
             )
         )
         CustomBike(
@@ -141,7 +162,7 @@ fun BikeItem(bikeToShow: BikeToShow, color: Color, withSmallWheel: Boolean, bike
         ItemCharacteristics(title = stringResource(id = R.string.wheels), value = bikeEntity.inchWheelSize)
         ItemCharacteristics(title = stringResource(id = R.string.service_in_characteristic), value = bikeEntity.distanceServiceDueInKm.toString() + bikesViewModel.currentDistanceUnit.name.lowercase())
 
-        CustomProgressBar((bikeEntity.traveledDistanceInKm/bikeEntity.distanceServiceDueInKm).toFloat(), modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.d12)))
+        CustomProgressBar(bikeEntity.traveledDistanceInKm.toFloat() / bikeEntity.distanceServiceDueInKm.toFloat(), modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.d12)))
     }
 }
 
@@ -152,7 +173,6 @@ fun ItemCharacteristics(title: String, value: String) {
         Text(text = value, color = White, style = Typography.titleMedium)
     }
 }
-
 
 
 @Preview

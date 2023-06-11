@@ -2,6 +2,7 @@ package com.example.mybike.repository
 
 import com.example.mybike.localdatasource.roomdb.bike.BikeEntity
 import com.example.mybike.localdatasource.roomdb.bike.BikeRepository
+import com.example.mybike.localdatasource.roomdb.relationships.BikeWithRides
 import com.example.mybike.localdatasource.roomdb.ride.RideEntity
 import com.example.mybike.localdatasource.roomdb.ride.RideRepository
 import com.example.mybike.localdatasource.sharedpreferences.MyBikeSharedPreferences
@@ -59,7 +60,7 @@ class BaseRepository @Inject constructor(
 
     fun getDefaultBike(): String {
         defaultCoroutine.launch {
-            defaultBike = bikeRepository.getBike(myBikeSharedPreferences.getDefaultBike()).bikeName
+            defaultBike = bikeRepository.getBike(myBikeSharedPreferences.getDefaultBike())?.bikeName ?: ""
         }
         return defaultBike
     }
@@ -101,10 +102,34 @@ class BaseRepository @Inject constructor(
                     date = date
                 )
             )
+            val bike = bikeRepository.getBike(bikeId)
+            bike?.let {
+                bikeRepository.updateTraveledDistance(bikeId, it.traveledDistanceInKm + distance)
+            }
         }
     }
 
-    suspend fun getBike(bikeId: Long): BikeEntity {
+    suspend fun getBike(bikeId: Long): BikeEntity? {
         return bikeRepository.getBike(bikeId)
+    }
+
+    suspend fun getBikeWithRides(bikeId: Long): BikeWithRides {
+        return bikeRepository.getBikeWithRides(bikeId)
+    }
+
+    fun deleteBike(bikeEntity: BikeEntity) {
+        defaultCoroutine.launch {
+            val bikeWithRides = bikeRepository.getBikeWithRides(bikeEntity.bikeId)
+            bikeWithRides.rides.forEach {
+                rideRepository.deleteRide(it)
+            }
+            bikeRepository.deleteBike(bikeEntity)
+        }
+    }
+
+    fun deleteRide(rideEntity: RideEntity) {
+        defaultCoroutine.launch {
+            rideRepository.deleteRide(rideEntity)
+        }
     }
 }

@@ -19,6 +19,9 @@ interface BikeDao {
     @Update
     fun updateBike(bikeEntity: BikeEntity): Int
 
+    @Query("UPDATE bikes SET traveledDistanceInKm = :newTraveledDistance WHERE bikeId= :bikeId")
+    fun updateTraveledDistance(bikeId: Long, newTraveledDistance: Int): Int
+
     @Delete
     fun deleteBike(bikeType: BikeEntity): Int
 
@@ -26,7 +29,7 @@ interface BikeDao {
     fun getAllBikes(): Flow<List<BikeEntity>>
 
     @Query("SELECT * FROM bikes WHERE bikeId= :bikeId")
-    fun getBike(bikeId: Long): BikeEntity
+    fun getBike(bikeId: Long): BikeEntity?
 
     @Transaction
     @Query("SELECT * FROM bikes WHERE bikeId= :bikeId")

@@ -72,4 +72,8 @@ class BikesViewModel @Inject constructor(private val baseRepository: BaseReposit
             Log.e(TAG, exception.message.toString())
         }
     }
+
+    fun deleteBike(bikeEntity: BikeEntity) {
+        baseRepository.deleteBike(bikeEntity)
+    }
 }

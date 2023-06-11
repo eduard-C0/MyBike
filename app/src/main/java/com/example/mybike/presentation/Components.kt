@@ -67,6 +67,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.mybike.R
 import com.example.mybike.ui.theme.Black
@@ -241,7 +242,10 @@ fun CustomThreeDotsDropdown(modifier: Modifier = Modifier, elements: List<ThreeD
                             Text(item.text)
                         }
                     },
-                    onClick = { item.onClick() },
+                    onClick = {
+                        item.onClick()
+                        expanded = false
+                    },
                     colors = MenuDefaults.itemColors(textColor = item.textColor),
                 )
             }
@@ -258,7 +262,10 @@ fun CustomProgressBar(progress: Float, modifier: Modifier = Modifier) {
             Icon(painter = painterResource(id = R.drawable.loading_bolt), contentDescription = null, tint = White)
         }
         Row(verticalAlignment = CenterVertically) {
-            Icon(painter = painterResource(id = R.drawable.loading_over), contentDescription = null, tint = Blue, modifier = Modifier.fillMaxWidth(progress))
+            Box(modifier = Modifier
+                .fillMaxWidth(progress)
+                .height(5.dp)
+                .background(Blue))
             Icon(painter = painterResource(id = R.drawable.loading_wrench), contentDescription = null, tint = Blue)
         }
     }

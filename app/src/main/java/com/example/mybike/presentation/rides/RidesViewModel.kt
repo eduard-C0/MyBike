@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.example.mybike.repository.BaseRepository
 import com.example.mybike.utils.toLocalDate
+import com.example.mybike.utils.toRideEntity
 import com.example.mybike.vo.DisplayRideItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -40,14 +41,16 @@ class RidesViewModel @Inject constructor(
                         it.distanceInKm,
                         it.durationInMinutes,
                         it.date,
-                        baseRepository.getBike(it.associatedBikeId).bikeName
+                        baseRepository.getBike(it.associatedBikeId)?.bikeName ?: ""
                     )
                 }
                     .sortedBy { it.date.toLocalDate() }
                     .groupBy { it.date.toLocalDate()?.month?.name }
 
                 val groupedByListOfDisplayRideItem = mutableListOf<DisplayRideItem>()
-
+                if (map.isNotEmpty()) {
+                    groupedByListOfDisplayRideItem.add(DisplayRideItem.Chart(""))
+                }
                 map.keys.forEach { key ->
                     key?.let {
                         groupedByListOfDisplayRideItem.add(DisplayRideItem.Divider(it))
@@ -57,6 +60,10 @@ class RidesViewModel @Inject constructor(
                 _ridesList.value = groupedByListOfDisplayRideItem
             }
         }
+    }
+
+    fun deleteRide(displayRideItem: DisplayRideItem.RideItemData) {
+        baseRepository.deleteRide(displayRideItem.toRideEntity())
     }
 
 

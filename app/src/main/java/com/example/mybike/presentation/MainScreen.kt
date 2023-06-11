@@ -1,6 +1,8 @@
 package com.example.mybike.presentation
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,13 +41,22 @@ import com.example.mybike.ui.theme.DefaultItem
 import com.example.mybike.ui.theme.MyBikeTheme
 import com.example.mybike.ui.theme.*
 import com.example.mybike.ui.theme.Typography
+import com.example.mybike.vo.BikeToShow
 import com.example.mybike.vo.BottomNavItem
 import com.example.mybike.vo.BottomNavItem.*
 import com.example.mybike.vo.Screens
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(onAddBikeClicked: () -> Unit, onAddRideClicked: () -> Unit, settingsViewModel: SettingsViewModel, bikesViewModel: BikesViewModel, ridesViewModel: RidesViewModel) {
+fun MainScreen(
+    onAddBikeClicked: () -> Unit,
+    onAddRideClicked: () -> Unit,
+    settingsViewModel: SettingsViewModel,
+    bikesViewModel: BikesViewModel,
+    ridesViewModel: RidesViewModel,
+    onItemClicked: (bikeId: Long) -> Unit
+) {
     val bottomNavItems = listOf(
         Bikes,
         Rides,
@@ -60,7 +72,7 @@ fun MainScreen(onAddBikeClicked: () -> Unit, onAddRideClicked: () -> Unit, setti
         ) {
             NavHost(navController = navController, startDestination = Screens.BIKES.name) {
                 composable(Screens.BIKES.name) {
-                    BikesScreen(onAddBikeClicked, bikesViewModel)
+                    BikesScreen(onAddBikeClicked, bikesViewModel, onItemClicked)
                 }
                 composable(Screens.RIDES.name) {
                     RidesScreen(ridesViewModel, onAddRideClicked)
@@ -95,10 +107,11 @@ fun BottomNavigation(items: List<BottomNavItem>, navController: NavController) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PreviewMainScreen() {
     MyBikeTheme {
-        MainScreen({}, {}, hiltViewModel(), hiltViewModel(), hiltViewModel())
+        MainScreen({}, {}, hiltViewModel(), hiltViewModel(), hiltViewModel(), {})
     }
 }

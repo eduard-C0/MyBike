@@ -28,6 +28,7 @@
     <string name="zero">0</string>
     <string name="select_duration">Select duration</string>
     <string name="duration_separator">:</string>
+    <string name="total_rides_distance">Total Rides Distance</string>
     <plurals name="hour_suffix">
         <item quantity="one"> h, </item>
         <item quantity="other"> hrs, </item>
