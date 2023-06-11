@@ -58,11 +58,8 @@ class BaseRepository @Inject constructor(
         myBikeSharedPreferences.saveDefaultBike(defaultBikeId)
     }
 
-    fun getDefaultBike(): String {
-        defaultCoroutine.launch {
-            defaultBike = bikeRepository.getBike(myBikeSharedPreferences.getDefaultBike())?.bikeName ?: ""
-        }
-        return defaultBike
+    suspend fun getDefaultBike(): String {
+        return bikeRepository.getBike(myBikeSharedPreferences.getDefaultBike())?.bikeName ?: ""
     }
 
     fun getAllBikes(): Flow<List<BikeEntity>> {

@@ -53,6 +53,9 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
 
     val distanceUnit = settingsViewModel.distanceUnit.collectAsState()
     val defaultBike = settingsViewModel.defaultBike.collectAsState()
+
+    var selectedDefaultBike by remember(defaultBike.value) { mutableStateOf(defaultBike.value) }
+
     val reminderNotificationStatus = settingsViewModel.serviceReminderNotificationStatus.collectAsState()
     val serviceReminderDistance = settingsViewModel.serviceReminderDistance.collectAsState()
     val bikes = settingsViewModel.bikeList.collectAsState()
@@ -116,8 +119,11 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
             CustomLabel = {
                 CustomLabel(stringResource(id = R.string.default_bike), iconId = R.drawable.icon_required, textColor = Gray, iconTint = Gray)
             },
-            selectedItem = defaultBike.value.ifBlank { NONE_ITEM },
-            onSelectedItem = {},
+            selectedItem = selectedDefaultBike.ifBlank { NONE_ITEM },
+            onSelectedItem = {
+                selectedDefaultBike = it
+                settingsViewModel.saveDefaultBike(it)
+            },
             modifier = Modifier
                 .padding(horizontal = dimensionResource(id = R.dimen.d8))
                 .padding(bottom = dimensionResource(id = R.dimen.d12))

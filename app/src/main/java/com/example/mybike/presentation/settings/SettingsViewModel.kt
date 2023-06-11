@@ -8,6 +8,7 @@ import com.example.mybike.repository.BaseRepository
 import com.example.mybike.utils.toDistanceUnit
 import com.example.mybike.vo.DistanceUnit
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val baseRepository: BaseRepository) : ViewModel() {
+class SettingsViewModel @Inject constructor(
+    private val baseRepository: BaseRepository,
+    private val defaultCoroutine: CoroutineScope
+) : ViewModel() {
     companion object {
         private const val TAG = "[Settings]: SettingsViewModel"
         private const val DEFAULT_SERVICE_REMINDER_DISTANCE = 100
@@ -46,7 +50,9 @@ class SettingsViewModel @Inject constructor(private val baseRepository: BaseRepo
     }
 
     fun getDefaultBike() {
-        _defaultBike.value = baseRepository.getDefaultBike()
+        defaultCoroutine.launch {
+            _defaultBike.value = baseRepository.getDefaultBike()
+        }
     }
 
     fun getServiceReminderNotificationStatus() {
@@ -61,6 +67,14 @@ class SettingsViewModel @Inject constructor(private val baseRepository: BaseRepo
     fun saveDistanceUnit(value: String) {
         baseRepository.saveSettingsDistanceUnit(value.toDistanceUnit())
         _distanceUnit.value = value.toDistanceUnit()
+    }
+
+    fun saveDefaultBike(bikeName: String) {
+        val bikeId = _bikeList.value.firstOrNull { it.bikeName == bikeName }?.bikeId
+        bikeId?.let {
+            baseRepository.saveDefaultBike(it)
+            _defaultBike.value = bikeName
+        }
     }
 
     fun saveServiceReminderDistance(value: String) {
