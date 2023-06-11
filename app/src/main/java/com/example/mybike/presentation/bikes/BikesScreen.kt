@@ -41,6 +41,7 @@ import com.example.mybike.ui.theme.Gray
 import com.example.mybike.ui.theme.LightBlue
 import com.example.mybike.ui.theme.Typography
 import com.example.mybike.ui.theme.White
+import com.example.mybike.vo.BikeDataItem
 import com.example.mybike.vo.BikeToShow
 import com.example.mybike.vo.ThreeDotsDropdownItem
 import com.example.mybike.vo.WheelSize
@@ -104,7 +105,7 @@ fun EmptyBikeScreen(onAddBikeClicked: () -> Unit) {
 
 @Composable
 fun ContentBikeScreen(
-    onAddBikeClicked: () -> Unit, bikeList: List<BikeEntity>, bikesViewModel: BikesViewModel, onItemClicked: (bikeId: Long) -> Unit
+    onAddBikeClicked: () -> Unit, bikeList: List<BikeDataItem>, bikesViewModel: BikesViewModel, onItemClicked: (bikeId: Long) -> Unit
 ) {
     Column(
         Modifier
@@ -136,7 +137,7 @@ fun BikeItem(
     bikeToShow: BikeToShow,
     color: Color,
     withSmallWheel: Boolean,
-    bikeEntity: BikeEntity,
+    bikeEntity: BikeDataItem,
     bikesViewModel: BikesViewModel,
     onItemClicked: (bikeId: Long) -> Unit
 ) {

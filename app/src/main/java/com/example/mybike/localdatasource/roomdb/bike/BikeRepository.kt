@@ -16,10 +16,6 @@ class BikeRepository @Inject constructor(private val myBikeDataBase: MyBikeDataB
         return myBikeDataBase.bikeDao().updateBike(bikeEntity)
     }
 
-    override suspend fun updateTraveledDistance(bikeId: Long, newDistance: Int): Int {
-        return myBikeDataBase.bikeDao().updateTraveledDistance(bikeId, newDistance)
-    }
-
     override suspend fun deleteBike(bikeEntity: BikeEntity): Int {
         return myBikeDataBase.bikeDao().deleteBike(bikeEntity)
     }

@@ -8,24 +8,30 @@ import androidx.lifecycle.viewModelScope
 import com.example.mybike.localdatasource.roomdb.bike.BikeEntity
 import com.example.mybike.repository.BaseRepository
 import com.example.mybike.ui.theme.White
+import com.example.mybike.utils.toBikeEntity
 import com.example.mybike.utils.toWheelSize
+import com.example.mybike.vo.BikeDataItem
 import com.example.mybike.vo.BikeToShow
 import com.example.mybike.vo.WheelSize
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BikesViewModel @Inject constructor(private val baseRepository: BaseRepository) : ViewModel() {
+class BikesViewModel @Inject constructor(
+    private val baseRepository: BaseRepository,
+    private val defaultCoroutine: CoroutineScope
+) : ViewModel() {
 
     companion object {
         private const val TAG = "[Bikes]: BikesViewModel"
     }
 
-    private val _bikesList = MutableStateFlow(emptyList<BikeEntity>())
-    val bikesList: StateFlow<List<BikeEntity>> = _bikesList
+    private val _bikesList = MutableStateFlow(emptyList<BikeDataItem>())
+    val bikesList: StateFlow<List<BikeDataItem>> = _bikesList
 
     private val _currentSelectedBikeToShow = MutableStateFlow<BikeToShow>(BikeToShow.RoadBike)
     val currentSelectedBikeToShow: StateFlow<BikeToShow> = _currentSelectedBikeToShow
@@ -39,9 +45,19 @@ class BikesViewModel @Inject constructor(private val baseRepository: BaseReposit
     val currentDistanceUnit = baseRepository.getSettingsDistanceUnit()
 
     fun getBikes() {
-        viewModelScope.launch {
+        defaultCoroutine.launch {
             baseRepository.getAllBikes().collect {
-                _bikesList.value = it
+                _bikesList.value = it.map { bikeEntity ->
+                    BikeDataItem(
+                        bikeEntity.bikeId,
+                        bikeEntity.bikeName,
+                        bikeEntity.bikeType,
+                        bikeEntity.inchWheelSize,
+                        bikeEntity.bikeColor,
+                        bikeEntity.distanceServiceDueInKm,
+                        baseRepository.getBikeWithRides(bikeEntity.bikeId).rides.sumOf { ride -> ride.distanceInKm }
+                    )
+                }
             }
         }
     }
@@ -73,7 +89,7 @@ class BikesViewModel @Inject constructor(private val baseRepository: BaseReposit
         }
     }
 
-    fun deleteBike(bikeEntity: BikeEntity) {
-        baseRepository.deleteBike(bikeEntity)
+    fun deleteBike(bikeEntity: BikeDataItem) {
+        baseRepository.deleteBike(bikeEntity.toBikeEntity())
     }
 }

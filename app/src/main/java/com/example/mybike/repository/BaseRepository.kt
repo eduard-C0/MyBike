@@ -102,10 +102,6 @@ class BaseRepository @Inject constructor(
                     date = date
                 )
             )
-            val bike = bikeRepository.getBike(bikeId)
-            bike?.let {
-                bikeRepository.updateTraveledDistance(bikeId, it.traveledDistanceInKm + distance)
-            }
         }
     }
 
@@ -127,9 +123,7 @@ class BaseRepository @Inject constructor(
         }
     }
 
-    fun deleteRide(rideEntity: RideEntity) {
-        defaultCoroutine.launch {
-            rideRepository.deleteRide(rideEntity)
-        }
+    suspend fun deleteRide(rideEntity: RideEntity) {
+        rideRepository.deleteRide(rideEntity)
     }
 }

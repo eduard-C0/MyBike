@@ -155,10 +155,13 @@ fun AddBikeScreen(bikesViewModel: BikesViewModel, onAddBikeClicked: () -> Unit, 
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = White,
                         unfocusedTextColor = White,
+                        disabledTextColor = White,
                         focusedContainerColor = DarkBlue,
                         unfocusedContainerColor = DarkBlue,
                         disabledContainerColor = DarkBlue,
                         focusedBorderColor = Gray,
+                        disabledBorderColor = Gray,
+                        unfocusedBorderColor = Gray
                     ),
                     maxLines= 1,
                     textStyle = Typography.displayMedium,

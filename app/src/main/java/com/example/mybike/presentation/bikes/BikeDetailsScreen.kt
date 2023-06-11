@@ -80,7 +80,7 @@ fun BikeDetailsScreen(bikeId: Long, bikeDetailsViewModel: BikeDetailsViewModel, 
                 )
 
                 CustomProgressBar(
-                    bikeWithRides.bike.traveledDistanceInKm.toFloat() / bikeWithRides.bike.distanceServiceDueInKm.toFloat(),
+                    bikeWithRides.rides.sumOf { ride -> ride.distanceInKm } / bikeWithRides.bike.distanceServiceDueInKm.toFloat(),
                     modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.d12))
                 )
 

@@ -3,7 +3,9 @@ package com.example.mybike.utils
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.mybike.localdatasource.roomdb.bike.BikeEntity
 import com.example.mybike.localdatasource.roomdb.ride.RideEntity
+import com.example.mybike.vo.BikeDataItem
 import com.example.mybike.vo.DisplayRideItem
 import com.example.mybike.vo.DistanceUnit
 import com.example.mybike.vo.Time
@@ -82,3 +84,4 @@ fun String.toLocalDate(): LocalDate? {
 }
 
 fun DisplayRideItem.RideItemData.toRideEntity(): RideEntity = RideEntity(rideId, associatedBikeId, rideTitle, distanceInKm, durationInMinutes, date)
+fun BikeDataItem.toBikeEntity(): BikeEntity = BikeEntity(bikeId, bikeName, bikeType, inchWheelSize, bikeColor, distanceServiceDueInKm)

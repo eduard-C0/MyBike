@@ -40,7 +40,10 @@ class BikeDetailsViewModel @Inject constructor(
     }
 
     fun deleteRide(rideEntity: RideEntity) {
-        baseRepository.deleteRide(rideEntity)
+        defaultCoroutine.launch {
+            baseRepository.deleteRide(rideEntity)
+            getBikeWithRides(rideEntity.associatedBikeId)
+        }
     }
 
 }

@@ -19,9 +19,6 @@ interface BikeDao {
     @Update
     fun updateBike(bikeEntity: BikeEntity): Int
 
-    @Query("UPDATE bikes SET traveledDistanceInKm = :newTraveledDistance WHERE bikeId= :bikeId")
-    fun updateTraveledDistance(bikeId: Long, newTraveledDistance: Int): Int
-
     @Delete
     fun deleteBike(bikeType: BikeEntity): Int
 

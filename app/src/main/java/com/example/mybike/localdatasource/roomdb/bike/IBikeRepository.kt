@@ -8,7 +8,6 @@ interface IBikeRepository {
     suspend fun addBike(bikeEntity: BikeEntity): Long
 
     suspend fun updateBike(bikeEntity: BikeEntity): Int
-    suspend fun updateTraveledDistance(bikeId: Long, newDisance: Int): Int
 
     suspend fun deleteBike(bikeEntity: BikeEntity): Int
 

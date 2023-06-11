@@ -11,6 +11,5 @@ data class BikeEntity(
     val bikeType: BikeType,
     val inchWheelSize: String,
     val bikeColor: Int,
-    val distanceServiceDueInKm: Int,
-    val traveledDistanceInKm: Int = 0
+    val distanceServiceDueInKm: Int
 )

@@ -106,7 +106,9 @@ class RidesViewModel @Inject constructor(
     }
 
     fun deleteRide(displayRideItem: DisplayRideItem.RideItemData) {
-        baseRepository.deleteRide(displayRideItem.toRideEntity())
+        defaultCoroutine.launch {
+            baseRepository.deleteRide(displayRideItem.toRideEntity())
+        }
     }
 
 
