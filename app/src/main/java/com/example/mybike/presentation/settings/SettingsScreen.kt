@@ -51,7 +51,6 @@ fun SettingsScreen(settingsViewModel: SettingsViewModel) {
         settingsViewModel.getBikes()
     }
 
-    //TODO: Get the value from the view model, If empty 100KM default
     val distanceUnit = settingsViewModel.distanceUnit.collectAsState()
     val defaultBike = settingsViewModel.defaultBike.collectAsState()
     val reminderNotificationStatus = settingsViewModel.serviceReminderNotificationStatus.collectAsState()

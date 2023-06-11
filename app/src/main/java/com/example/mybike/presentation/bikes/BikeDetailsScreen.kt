@@ -41,7 +41,7 @@ import com.example.mybike.vo.toWheelSize
 
 
 @Composable
-fun BikeDetailsScreen(bikeId: Long, bikeDetailsViewModel: BikeDetailsViewModel, onBackButtonClicked: () -> Unit) {
+fun BikeDetailsScreen(bikeId: Long, bikeDetailsViewModel: BikeDetailsViewModel, onBackButtonClicked: () -> Unit, onEditRideClick: (rideId: Long?) -> Unit) {
     LaunchedEffect(key1 = Unit) {
         bikeDetailsViewModel.getBikeWithRides(bikeId)
     }
@@ -112,7 +112,7 @@ fun BikeDetailsScreen(bikeId: Long, bikeDetailsViewModel: BikeDetailsViewModel, 
                         bikeDetailsViewModel.currentDistanceUnit,
                         DarkBlue,
                         listOf(
-                            ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {}, White, Typography.titleSmall),
+                            ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {onEditRideClick(ride.rideId)}, White, Typography.titleSmall),
                             ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, { bikeDetailsViewModel.deleteRide(ride) }, White, Typography.titleSmall)
                         )
                     )

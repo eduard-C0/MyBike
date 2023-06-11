@@ -259,11 +259,11 @@ fun CustomProgressBar(progress: Float, modifier: Modifier = Modifier) {
             Icon(painter = painterResource(id = R.drawable.loading_bar), contentDescription = null, tint = LightBlue)
             Icon(painter = painterResource(id = R.drawable.loading_bolt), contentDescription = null, tint = White)
         }
-        Row(verticalAlignment = CenterVertically) {
+        Row(verticalAlignment = CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier
                 .fillMaxWidth(progress)
                 .height(5.dp)
-                .background(Blue))
+                .background(Blue).weight(1f,false))
             Icon(painter = painterResource(id = R.drawable.loading_wrench), contentDescription = null, tint = Blue)
         }
     }

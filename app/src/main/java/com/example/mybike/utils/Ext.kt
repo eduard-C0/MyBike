@@ -18,6 +18,7 @@ import java.time.format.DateTimeParseException
 import java.util.Date
 
 private const val TAG = "[Utils]: Ext"
+private const val ONE_MILE_REPORTED_TO_KM = 0.621371
 
 fun String.toDistanceUnit(): DistanceUnit {
     return when (this) {
@@ -85,3 +86,6 @@ fun String.toLocalDate(): LocalDate? {
 
 fun DisplayRideItem.RideItemData.toRideEntity(): RideEntity = RideEntity(rideId, associatedBikeId, rideTitle, distanceInKm, durationInMinutes, date)
 fun BikeDataItem.toBikeEntity(): BikeEntity = BikeEntity(bikeId, bikeName, bikeType, inchWheelSize, bikeColor, distanceServiceDueInKm)
+
+fun Int.toMiles() = this / ONE_MILE_REPORTED_TO_KM
+fun Int.toKM() = this * ONE_MILE_REPORTED_TO_KM

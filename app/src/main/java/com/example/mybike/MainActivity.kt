@@ -101,7 +101,11 @@ class MainActivity : ComponentActivity() {
             composable(Screens.BIKE_DETAILS_SCREEN.name + "/{$BIKE_ID}", arguments = listOf(navArgument(BIKE_ID) { type = NavType.LongType })) {
                 val bikeId = it.arguments?.getLong(BIKE_ID)
                 bikeId?.let {
-                    BikeDetailsScreen(bikeId = bikeId, bikeDetailsViewModel = bikeDetailsViewModel, onBackButtonClicked = { navController.popBackStack() })
+                    BikeDetailsScreen(
+                        bikeId = bikeId,
+                        bikeDetailsViewModel = bikeDetailsViewModel,
+                        onBackButtonClicked = { navController.popBackStack() },
+                        onEditRideClick = { rideId -> navController.navigate(Screens.ADD_RIDE.name + "?$RIDE_ID=$rideId") })
                 }
             }
         }

@@ -71,7 +71,7 @@ fun AddRideScreen(rideId: Long?, ridesViewModel: AddRideViewModel, onExitButtonC
 
     DisposableEffect(key1 = Unit) {
         onDispose {
-            if (rideId != null){
+            if (rideId != null) {
                 ridesViewModel.resetRide()
             }
         }
@@ -92,8 +92,8 @@ fun AddRideScreen(rideId: Long?, ridesViewModel: AddRideViewModel, onExitButtonC
     var dateInputText by remember(ride) { mutableStateOf(TextFieldValue(ride.date)) }
     var openDatePickerDialog by remember { mutableStateOf(false) }
     var openTimePickerDialog by remember { mutableStateOf(false) }
-    var initialHour by remember(ride) { mutableStateOf(if (hour == 0) "" else hour.toString()) }
-    var initialMinute by remember(ride) { mutableStateOf(if (minute == 0) "" else minute.toString()) }
+    var initialHour by remember(ride) { mutableStateOf(hour.toString()) }
+    var initialMinute by remember(ride) { mutableStateOf(minute.toString()) }
 
     Box(modifier = Modifier.fillMaxSize()) {
 

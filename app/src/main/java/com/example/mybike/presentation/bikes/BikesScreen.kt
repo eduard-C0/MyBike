@@ -152,7 +152,6 @@ fun BikeItem(
     ) {
         CustomThreeDotsDropdown(
             modifier = Modifier.align(Alignment.End), elements = listOf(
-                ThreeDotsDropdownItem("Edit", R.drawable.icon_edit, White, {}, White, Typography.titleSmall),
                 ThreeDotsDropdownItem("Delete", R.drawable.icon_delete, White, { bikesViewModel.deleteBike(bikeEntity) }, White, Typography.titleSmall)
             )
         )
@@ -163,7 +162,12 @@ fun BikeItem(
         ItemCharacteristics(title = stringResource(id = R.string.wheels), value = bikeEntity.inchWheelSize)
         ItemCharacteristics(title = stringResource(id = R.string.service_in_characteristic), value = bikeEntity.distanceServiceDueInKm.toString() + bikesViewModel.currentDistanceUnit.name.lowercase())
 
-        CustomProgressBar(bikeEntity.traveledDistanceInKm.toFloat() / bikeEntity.distanceServiceDueInKm.toFloat(), modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.d12)))
+        CustomProgressBar(
+            bikeEntity.traveledDistanceInKm.toFloat() / bikeEntity.distanceServiceDueInKm.toFloat(),
+            modifier = Modifier
+                .padding(vertical = dimensionResource(id = R.dimen.d12))
+                .fillMaxWidth()
+        )
     }
 }
 
